@@ -4,12 +4,10 @@ import React, { useState, useEffect } from "react";
 import { useWeb3React } from '@web3-react/core'
 import axios from 'axios'
 
-import IconButton from '@material-ui/core/IconButton';
-import CloseIcon from '@material-ui/icons/Close';
 import CircularProgress from '@material-ui/core/CircularProgress';
-import Snackbar from '@material-ui/core/Snackbar';
 
 import { GridContainer, GridRow, GridItem } from 'components/Grid'
+import CustomSnackbar from 'components/CustomSnackbar'
 import TextField from 'components/TextField'
 
 import * as Element from "./styles";
@@ -125,7 +123,7 @@ function EditProfile(props) {
 											label='Name'
 											helpText='0/20'
 											type='text'
-										/>										
+										/>
 										<TextField
 											onChange={e => setNewBio(e.target.value)}
 											value={newBio}
@@ -157,22 +155,10 @@ function EditProfile(props) {
 						</GridRow>
 						: <></>
 				}
-				<Snackbar
-					anchorOrigin={{
-						vertical: 'bottom',
-						horizontal: 'left',
-					}}
+				<CustomSnackbar
 					open={openSnackbar}
-					autoHideDuration={3000}
-					onClose={handleClose}
+					handleClose={handleClose}
 					message={snackBarMessage}
-					action={
-						<React.Fragment>
-							<IconButton size="small" aria-label="close" color="inherit" onClick={handleClose}>
-								<CloseIcon fontSize="small" />
-							</IconButton>
-						</React.Fragment>
-					}
 				/>
 			</GridContainer>
 		</Element.ProfileWrapper>

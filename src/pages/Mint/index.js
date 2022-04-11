@@ -1,13 +1,11 @@
 /* eslint-disable no-unused-vars */
 import React, { useState, useEffect } from "react";
 import { useWeb3React } from '@web3-react/core'
-import CloseIcon from '@material-ui/icons/Close';
-import IconButton from '@material-ui/core/IconButton';
 import CircularProgress from '@material-ui/core/CircularProgress';
-import Snackbar from '@material-ui/core/Snackbar';
 
 import { GridContainer, GridRow, GridItem } from 'components/Grid'
 import CustomButton from 'components/CustomButton'
+import CustomSnackbar from 'components/CustomSnackbar'
 import * as Element from "./styles";
 import { mint, getTokenBalance, getMintPrice, getMintSupply } from "../../utils/contracts";
 
@@ -125,7 +123,7 @@ function Mint(props) {
 								<Element.InputText1>Minted: {supply} / 3,000</Element.InputText1>
 								<Element.InputText1>Mint Price: {price.toLocaleString('en', { maximumFractionDigits: 0 })} {process.env.REACT_APP_TOKEN}</Element.InputText1>
 								<Element.InputText1>Total Cost: {(price * numToken).toLocaleString('en', { maximumFractionDigits: 0 })} {process.env.REACT_APP_TOKEN}</Element.InputText1>
-								<Element.ButtonSection>									
+								<Element.ButtonSection>
 									<CustomButton size='medium' onClick={onMintItem}>
 										{
 											mintingNFT ? <CircularProgress style={{ width: "16px", height: "16px", color: "white", }} /> : "Mint Now"
@@ -143,22 +141,10 @@ function Mint(props) {
 					</GridRow>
 				}
 
-				<Snackbar
-					anchorOrigin={{
-						vertical: 'bottom',
-						horizontal: 'center'
-					}}
+				<CustomSnackbar
 					open={openSnackbar}
-					autoHideDuration={3000}
-					onClose={handleCloseDialog}
+					handleClose={handleCloseDialog}
 					message={snackBarMessage}
-					action={
-						<React.Fragment>
-							<IconButton size="small" aria-label="close" color="inherit" onClick={handleCloseDialog}>
-								<CloseIcon fontSize="small" />
-							</IconButton>
-						</React.Fragment>
-					}
 				/>
 			</GridContainer>
 		</Element.Wrapper>

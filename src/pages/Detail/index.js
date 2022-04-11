@@ -8,9 +8,6 @@ import Querystring from 'query-string'
 import Modal from "react-modal";
 import DatePicker from 'react-datepicker'
 
-import Snackbar from '@material-ui/core/Snackbar';
-import CloseIcon from '@material-ui/icons/Close';
-import IconButton from '@material-ui/core/IconButton';
 import CircularProgress from '@material-ui/core/CircularProgress';
 
 import { getTokenBalance, listItem, delistItem, buy, createAuction, finalizeAuction, bidOnAuction } from "utils/contracts";
@@ -21,6 +18,7 @@ import DetailActions from './DetailActions'
 
 import { GridContainer, GridRow, GridItem } from 'components/Grid'
 import CustomButton from 'components/CustomButton'
+import CustomSnackbar from 'components/CustomSnackbar'
 import * as Element from "./styles";
 import "react-datepicker/dist/react-datepicker.css";
 
@@ -514,7 +512,7 @@ function Detail(props) {
 											<Element.OptionText>{auctionStatusMessage}</Element.OptionText>
 											<Element.Times>
 												<Element.Time>
-													<Element.TimeValue>{state.days || '00'}</Element.TimeValue>												
+													<Element.TimeValue>{state.days || '00'}</Element.TimeValue>
 												</Element.Time>
 												<Element.Time>
 													<Element.TimeValue>{state.hours || '00'}</Element.TimeValue>
@@ -570,7 +568,7 @@ function Detail(props) {
 										: <></>
 								}
 							</Element.ActionContainer>
-							
+
 							<Element.Others>
 								<Element.TabHeader>
 									<Element.Tab style={{ display: item?.auction ? "" : "none" }} onClick={() => setCurTab('bid_history')} className={curTab === 'bid_history' ? 'active' : ''}>Bids</Element.Tab>
@@ -699,7 +697,7 @@ function Detail(props) {
 					</Modal>
 
 					<Modal
-						isOpen={showPutMarketPlace}					
+						isOpen={showPutMarketPlace}
 						onRequestClose={() => setShowPutMarketPlace(false)}
 						ariaHideApp={false}
 						style={{
@@ -816,7 +814,7 @@ function Detail(props) {
 					</Modal>
 
 					<Modal
-						isOpen={showEndAuction}						
+						isOpen={showEndAuction}
 						onRequestClose={() => setShowEndAuction(false)}
 						ariaHideApp={false}
 						style={{
@@ -865,7 +863,7 @@ function Detail(props) {
 					</Modal>
 
 					<Modal
-						isOpen={showUnlistMarketPlace}					
+						isOpen={showUnlistMarketPlace}
 						onRequestClose={() => setShowUnlistMarketPlace(false)}
 						ariaHideApp={false}
 						style={{
@@ -912,23 +910,11 @@ function Detail(props) {
 							</Element.ModalActions>
 						</Element.ModalBody>
 					</Modal>
-
-					<Snackbar
-						anchorOrigin={{
-							vertical: 'bottom',
-							horizontal: 'center'
-						}}
+				
+					<CustomSnackbar
 						open={openSnackbar}
-						autoHideDuration={3000}
-						onClose={handleCloseDialog}
+						handleClose={handleCloseDialog}
 						message={snackBarMessage}
-						action={
-							<React.Fragment>
-								<IconButton size="small" aria-label="close" color="inherit" onClick={handleCloseDialog}>
-									<CloseIcon fontSize="small" />
-								</IconButton>
-							</React.Fragment>
-						}
 					/>
 				</GridRow>
 			</GridContainer>

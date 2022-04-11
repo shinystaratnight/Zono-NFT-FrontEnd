@@ -8,6 +8,8 @@ import { AuthProvider } from './context/authContext';
 import * as serviceWorker from './serviceWorker';
 import { BrowserRouter } from 'react-router-dom';
 
+import './assets/styles/index.css'
+
 function getLibrary(provider) {
   const library = new Web3Provider(provider)
   library.pollingInterval = 12000

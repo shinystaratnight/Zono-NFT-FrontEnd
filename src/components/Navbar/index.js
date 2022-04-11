@@ -21,8 +21,7 @@ import {
   TriggerButton,
   NavContents,
   NavLinkList,
-  NavLink,
-  BuyZonoLink
+  NavLink  
 } from './styles'
 
 const Navbar = (props) => {
@@ -30,7 +29,7 @@ const Navbar = (props) => {
   const { connectAccount, window } = props
   const location = useLocation()
   const history = useHistory()
-  console.log(location.pathname)
+  
   const { account, active, deactivate } = useWeb3React();
 
   const [openSidebar, setOpenSidebar] = useState(false)

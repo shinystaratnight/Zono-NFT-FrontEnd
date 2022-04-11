@@ -21,13 +21,13 @@ import {
 
 const SearchForm = (props) => {
 
-  const { onChangeInput, onSelectView, viewMethod } = props
+  const { onChangeInput, onSelectView, viewMethod, hideViewTab } = props
 
   const [text, setText] = useState('')
 
   const handleChange = (e) => {
     if (e.key === 'Enter') {
-      onChangeInput(e.target.value) 
+      onChangeInput(e.target.value)
     }
   }
 
@@ -44,20 +44,24 @@ const SearchForm = (props) => {
             </InputForm>
           </InputFormWrapper>
         </GridItem>
-        <GridItem xl={6} lg={6} md={6} sm={6} xs={6}>
-          <NavTabs>
-            <NavItem>
-              <NavLink onClick={(e) => {e.preventDefault(); onSelectView('grid')}} active={viewMethod === 'grid'}>
-                <ViewModuleIcon />
-              </NavLink>
-            </NavItem>
-            <NavItem>
-              <NavLink onClick={(e) => {e.preventDefault(); onSelectView('list')}} active={viewMethod === 'list'}>
-                <ViewListIcon />
-              </NavLink>
-            </NavItem>
-          </NavTabs>
-        </GridItem>
+        {
+          hideViewTab ? <></> : (
+            <GridItem xl={6} lg={6} md={6} sm={6} xs={6}>
+              <NavTabs>
+                <NavItem>
+                  <NavLink onClick={(e) => { e.preventDefault(); onSelectView('grid') }} active={viewMethod === 'grid'}>
+                    <ViewModuleIcon />
+                  </NavLink>
+                </NavItem>
+                <NavItem>
+                  <NavLink onClick={(e) => { e.preventDefault(); onSelectView('list') }} active={viewMethod === 'list'}>
+                    <ViewListIcon />
+                  </NavLink>
+                </NavItem>
+              </NavTabs>
+            </GridItem>
+          )
+        }
       </GridRow>
     </SearchFormWrapper>
   )

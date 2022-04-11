@@ -6,13 +6,11 @@ export const ProfilePageWrap = styled.div`
 `;
 
 export const ProfileBanner = styled.div`
-  padding: 50px 0;
-  background-color: var(--colorOrange);
-  color: #fff; 
+  padding: 50px 0;  
 `;
 
 export const InnerWrap = styled.div`
-  min-height: 370px;
+  min-height: 200px;
   display: flex;
   align-items: center;
   flex-wrap: wrap;
@@ -92,7 +90,7 @@ export const BalanceValue = styled.span`
 `
 
 export const SettingLink = styled(Link)`
-  background-color: #962C0B;
+  background-color: var(--colorOrange);
   padding: 12px 45px;
   border:1px solid var(--colorOrange);
   border-radius: 100px;
@@ -129,7 +127,7 @@ export const ProfileContentBox = styled.div`
 `
 
 export const CardSection = styled.div`
-  padding: 90px 0 120px;
+  padding: 0px 0 120px;
 `
 
 export const SearchFormWrapper = styled.div`
@@ -165,4 +163,21 @@ export const PaginationBox = styled.div`
   margin-top: 30px;
   display: flex;
   justify-content: center;
+`
+
+export const TabList = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+`
+export const TabLink = styled.div`
+  font-size: 16px;
+  color: ${props => props.active ? '#fff' : '#222'};
+  cursor: pointer;
+  transition: all 0.3s;
+  padding: 12px 45px;
+  border-radius: 100px;
+  background-color: ${props => props.active ? 'var(--colorOrange)' : 'white'};
+  @media screen and (max-width: 767px) {
+    width: 100%;
+  }
 `
