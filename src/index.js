@@ -9,18 +9,18 @@ import * as serviceWorker from './serviceWorker';
 import { BrowserRouter } from 'react-router-dom';
 
 function getLibrary(provider) {
-    const library = new Web3Provider(provider)
-    library.pollingInterval = 12000
-    return library
+  const library = new Web3Provider(provider)
+  library.pollingInterval = 12000
+  return library
 }
 const app = (
-    <Web3ReactProvider getLibrary={getLibrary}>
-      <AuthProvider>
-        <BrowserRouter>
-            <App />
-        </BrowserRouter>
-      </AuthProvider>
-    </Web3ReactProvider>    
+  <Web3ReactProvider getLibrary={getLibrary}>
+    <AuthProvider>
+      <BrowserRouter>
+        <App />
+      </BrowserRouter>
+    </AuthProvider>
+  </Web3ReactProvider>
 );
 
 ReactDOM.render(app, document.getElementById('root'));

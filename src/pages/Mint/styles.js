@@ -1,42 +1,41 @@
 import styled from 'styled-components';
 
+export const Wrapper = styled.div`
+  padding: 120px 0;
+  @media screen and (max-width: 991px) {
+    padding: 60px 0;
+  }
+`
+
 export const Container = styled.div`
-    max-width: 1216px;
-    margin: 0 auto;
+  max-width: 1216px;
+  margin: 0 auto;
 `;
 export const Section = styled.div`
-    margin-top: 2rem;
-    &#introduce{
-      margin-top: 4rem;
-      display: flex;
-      justify-content: space-around;
-    }
+  margin-top: 2rem;
+  &#introduce{
+    margin-top: 4rem;
+    display: flex;
+    justify-content: space-around;
+  }
 
-    &#foxes{
-      margin-top: 4rem;
-      height: 240px;
-      .area{
-        white-space: nowrap;
-      }
+  &#foxes{
+    margin-top: 4rem;
+    height: 240px;
+    .area{
+      white-space: nowrap;
     }
+  }
 `;
 export const Title = styled.div`
   text-align: center;
-  font-size: 32px;
-  font-weight: bold;
-  label{
-    white-space: nowrap;
-    letter-spacing: .05rem;
-    animation : typing 5s steps(240, end);
-    overflow: hidden;
-  }
-  @keyframes typing{
-    from {
-      width: 1%;
-    }
-    to{
-      width: 100%;
-    }
+  font-size: 42px;
+  font-weight: 700;
+  color: #222;
+  letter-spacing: .5px;
+  margin-bottom: 20px;
+  @media screen and (max-width: 575px) {
+    font-size: 30px;
   }
 `;
 export const InputSection = styled.div`
@@ -44,94 +43,128 @@ export const InputSection = styled.div`
   padding: 24px 0;
 `
 export const InputText = styled.div`
-    text-align: center;
-    font-size: 28px;
-    font-weight: bold;
-    padding: 20px 0;
+  text-align: center;
+  font-size: 28px;
+  font-weight: bold;
+  padding: 20px 0;
 `
 export const InputText1 = styled.div`
-    text-align: center;
-    font-size: 24px;
-    font-weight: bold;
-    padding: 10px 0;
+  text-align: center;
+  font-size: 1.2rem;
+  color: rgba(0, 0, 0, 0.8);
+  font-weight: bold;
+  padding: 10px 0;
 `
-export const InputText2 = styled.div`
-    // text-align: center;
-    font-size: 20px;
-    font-weight: 600;
-    padding: 10px 10px;
+export const InputText2 = styled.div`    
+  font-size: 20px;
+  font-weight: 600;
+  padding: 10px 10px;
 `
 export const InputContainer = styled.div`
-    display: flex;
-    align-items: center;
-    justify-content: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 `
-export const SpanItem = styled.span`
-    font-size: 35px;
-    cursor: pointer;
+export const SpanItem = styled.span` 
+  cursor: pointer;
+  box-shadow: 0 4px 10px 0 rgb(41 128 185 / 7%);
+  border: 1px solid #eaeff5;
+  font-size: 15px;
+  padding: 0 !important;
+  width: 40px;
+  height: 40px;
+  border-radius: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  margin-left: 8px;
+  margin-right: 8px;
+  line-height: 1;
 `
 export const InputItem = styled.input`
-    height: 40px;
-    width: 160px;
-    border-radius: 10px;
-    font-size: 20px;
-    text-align: center;
+  height: 40px;
+  width: 160px; 
+  font-size: 20px;
+  text-align: center;
+  padding: 15px 15px;  
+  outline: 0;
+  font-size: 20px;
+  color: #222;
+  border: 1px solid #eaeff5;
+  border-radius: 6px;  
+  height: auto;
+  box-shadow: 0 4px 10px 0 rgb(41 128 185 / 7%);
 `
 export const ButtonSection = styled.div`
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding-top: 28px;
-    padding-bottom: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-top: 28px;
+  padding-bottom: 28px;
 `
 export const ButtonItem = styled.div`
-    border-radius: 10px;
-    padding: 7px 20px;
-    border: 2px solid black;
-    margin: 0 10px;
-    font-size: 18px;
-    font-weight: bold;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
+  border-radius: 10px;
+  padding: 7px 20px;
+  border: 2px solid black;
+  margin: 0 10px;
+  font-size: 18px;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
 `
 export const ButtonItem1 = styled.div`
-    border-radius: 10px;
-    padding: 7px 20px;
-    border: 2px solid red;
-    margin: 0 10px;
-    font-size: 18px;
-    color: white;
-    font-weight: bold;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: var(--colorOrange);
-    border:1px solid var(--colorOrange);
-    cursor: pointer;
-    &:hover{
-      background: #000 !important;
-      text-decoration: none;
-      border-color: #000 !important;
-      outline: none !important;
-  }
+  border-radius: 10px;
+  padding: 7px 20px;
+  border: 2px solid red;
+  margin: 0 10px;
+  font-size: 18px;
+  color: white;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--colorOrange);
+  border:1px solid var(--colorOrange);
+  cursor: pointer;
+  &:hover{
+    background: #000 !important;
+    text-decoration: none;
+    border-color: #000 !important;
+    outline: none !important;
+}
 `
 export const ImgSection = styled.div`
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    @media (max-width: 768px){
-      display: block;
-      text-align: center;
-  }
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  @media (max-width: 768px){
+    display: block;
+    text-align: center;
+}
 `
 export const ImgItem = styled.div`
-    padding: 1% 3%;
+  padding: 1% 3%;
 `
 export const ContractDiv = styled.div`
-    padding-top: 2%;
-    text-align: center;
-    font-size: 16px;
-    font-weight: bold;
+  padding-top: 2%;
+  text-align: center;
+  font-size: 16px;
+  font-weight: bold;
+  color: rgba(0, 0, 0, 0.8)
+`
+
+export const ContractLink = styled.a`
+  word-break: break-all;
+  color: var(--colorOrange);
+`
+export const Img = styled.img`
+  border-radius: 10px;
+  width: 400px;
+  height: 400px;
+  @media screen and (max-width: 575px) {
+    height: 90vw;
+  }
 `

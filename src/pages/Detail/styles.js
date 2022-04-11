@@ -1,38 +1,41 @@
 import styled from 'styled-components';
-import {Heart} from "@styled-icons/feather/Heart";
-import {ShareSocial} from "@styled-icons/ionicons-outline";
-import {Close} from "@styled-icons/material/Close";
-import {Info} from "@styled-icons/material/Info";
-import {AccessTimeFilled} from "@styled-icons/material";
-import {Tag} from "@styled-icons/fa-solid/Tag";
-import {Heart as HeartFill} from "@styled-icons/fa-solid/Heart";
-import {Mail} from "@styled-icons/feather/Mail";
-import {Twitter} from "@styled-icons/bootstrap/Twitter";
-import {Telegram} from "@styled-icons/bootstrap/Telegram";
+import { Heart } from "@styled-icons/feather/Heart";
+import { ShareSocial } from "@styled-icons/ionicons-outline";
+import { Close } from "@styled-icons/material/Close";
+import { Info } from "@styled-icons/material/Info";
+import { AccessTimeFilled } from "@styled-icons/material";
+import { Tag } from "@styled-icons/fa-solid/Tag";
+import { Heart as HeartFill } from "@styled-icons/fa-solid/Heart";
+import { Mail } from "@styled-icons/feather/Mail";
+import { Twitter } from "@styled-icons/bootstrap/Twitter";
+import { Telegram } from "@styled-icons/bootstrap/Telegram";
 
+export const Wrapper = styled.div`
+	padding: 120px 0;
+	@media screen and (max-width: 991px) {
+		padding: 60px 0;
+	}
+`
 
 export const Container = styled.div`
-    display: block;
-    color: #1E2026;
-    margin 48px auto;
-    max-width: 1200px;
+	display: block;
+	color: #1E2026;
+	margin 48px auto;
+	max-width: 1200px;
   @media (min-width: 1200px){
     display flex;
   }
 `;
 
 export const ImageContainer = styled.div`
-    padding: 0 12px;
-    @media (min-width: 1200px){
-      padding: 0;
-    }
+	
 `;
 
 export const ImageContent = styled.div`
-    position: relative;    
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+	position: relative;    
+	display: flex;
+	flex-direction: column;
+	align-items: center;
 `;
 
 export const NftImage = styled.img`
@@ -88,9 +91,10 @@ export const Address = styled.div`
 `;
 
 export const NftAddress = styled.a`
-    text-decoration: unset;
-    color: #1E2026;
-    font-size: 12px;
+	text-decoration: unset;
+	color: #1E2026;
+	font-size: 16px;
+	word-break: break-all;
 `;
 
 export const NftNetwork = styled.div`
@@ -111,14 +115,9 @@ export const TokenId = styled.div`
 `;
 
 export const DetailContainer = styled.div`
-    margin-left: 0;
-    padding: 12px;
-        
-    flex-grow: 1;
-    @media (min-width: 1200px){
-        margin-left: 40px;
-      padding: 0;
-    }
+	@media screen and (max-width: 767px) {
+		margin-top: 40px;
+	}
 `;
 
 export const Header = styled.div`
@@ -158,7 +157,7 @@ export const CollectionTitle = styled.div`
 `;
 
 export const NftTitle = styled.div`
-    font-size: 20px;
+    font-size: 30px;
     font-weight: bold;
 `;
 
@@ -178,12 +177,10 @@ export const HeaderRight = styled.div`
 `;
 
 export const DropDownMenus = styled.div`
-    background: white;
-    width: 240px;
-    position: absolute;
-    bottom: -144px;
-    box-shadow: rgb(0 0 0 / 10%) 0px 0px 15px;
-    right: 0;
+	background: white;
+	width: 240px;
+	// box-shadow: rgb(0 0 0 / 10%) 0px 0px 15px;
+	// right: 0;
 `;
 
 export const DropDownMenu = styled.div`
@@ -210,9 +207,10 @@ export const EmailIcon = styled(Mail)`
 `;
 
 export const Favorite = styled.div`
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	cursor: pointer;
 `;
 export const FavouritesCount = styled.div`
     font-size: 10px;
@@ -228,15 +226,16 @@ export const LoveIcon = styled(Heart)`
 `;
 
 export const ShareIcon = styled(ShareSocial)`
-    margin-left: 12px;    
-    margin-bottom: 4px;
+	margin-left: 12px;    
+	margin-bottom: 4px;
+	cursor: pointer;
 `;
 
 export const OwnerContainer = styled.div`
-    margin-top: 24px;
+    margin-top: 10px;
 `;
 export const Owners = styled.div`
-    display: flex;
+  margin-bottom: 15px;
 `;
 export const Owner = styled.div`
     display: flex;
@@ -244,37 +243,39 @@ export const Owner = styled.div`
     margin-right: 40px;
 `;
 export const OptionText = styled.div`
-    font-size: 14px;
-    margin-bottom: 8px;    
+	font-size: 16px;
+	margin-bottom: 8px;   
+	color: #222; 
 `;
 export const UserOptionText = styled.div`
-    font-size: 12px;
-    margin-bottom: 4px;
-    color: grey;
+	font-size: 16px;
+	margin-bottom: 8px;
+	color: #222;
 `;
 export const CreatorContent = styled.div`
-    margin-left: 20px;
+	margin-left: 10px;
 `;
 export const CreatorImage = styled.img`
-    width: 30px;
-    height: 30px;
-    border-radius: 24px;
-    cursor: pointer;
+	width: 45px;
+	height: 45px;
+	border-radius: 45px;
+	cursor: pointer;
 `;
 export const CreatorName = styled.div`
-    font-weight: bold;
-    font-size: 14px;
+	font-weight: bold;
+	font-size: 18px;
+	color: #888;
 `;
-export const Caption = styled.div`
-    margin-top: 20px;
-    font-weight: 400;
-    font-size: 14px;
-    line-height: 20px;
-    word-break: break-word;
-    white-space: pre-line;
-    max-height: 80px;
-    overflow: auto;
-    color: rgb(30, 35, 41);
+export const Caption = styled.div`	
+	font-weight: 400;		
+	word-break: break-word;
+	white-space: pre-line;
+	max-height: 80px;
+	overflow: auto;
+	font-size: 16px;
+	color: #777;
+	line-height: 1.6;
+	margin-bottom: 12px;
 `;
 export const StatusContainer = styled.div`
     margin-top: 20px;
@@ -312,11 +313,13 @@ export const Price = styled.div`
     margin-left: 8px;
     font-size: 20px;
     font-weight: bold;
+		color: var(--colorOrange);
 `;
 export const Unit = styled.div`
     margin-left: 4px;
     font-size: 20px;
     font-weight: bold;
+		color: var(--colorOrange);
 `;
 
 export const UsdPrice = styled.span`
@@ -355,13 +358,12 @@ export const TabHeader = styled.div`
 `;
 
 export const Tab = styled.div`
-    padding: 8px 20px;
-    font-size: 14px;
-    font-weight : 600;
-    cursor: pointer;
-    &.active {
-        border-bottom: solid 4px rgb(226 71 23);
-    }
+	padding: 8px 20px;
+	font-size: 16px;   
+	cursor: pointer;
+	&.active {
+		border-bottom: solid 4px rgb(226 71 23);
+	}
 `;
 
 export const TabContent = styled.div`
@@ -378,17 +380,17 @@ export const Times = styled.div`
 `;
 
 export const Time = styled.div`
-    text-align: center;
-    margin: 0 2px;
+	text-align: center;
+	margin: 0 2px;
+	background-color: #f4f4f4;
+	padding: 12px;
+	border-radius: 4px;
 `;
 
-export const TimeValue = styled.div`
-    border-radius: 4px;
-    padding: 12px;
-    font-size: 24px;
-    font-weight: bold;
-    color: #1E2026;
-    background-color: #e3e3e3;
+export const TimeValue = styled.div`        
+	font-size: 24px;
+	font-weight: bold;
+	color: #1E2026;    
 `;
 
 export const TimeLabel = styled.div`
@@ -402,9 +404,9 @@ export const TabContentContainer = styled.div`
 `;
 
 export const InfoList = styled.div`
-    max-height: 450px;
-    padding-bottom: 80px;
-    overflow: auto;
+	max-height: 450px;
+	padding-bottom: 40px;
+	overflow: auto;
 `;
 
 export const ViewMore = styled.div`
@@ -481,49 +483,49 @@ export const HistoryUnit = styled.div`
 
 // Provenance
 export const ProvenanceContainer = styled.div`
-    display: flex;
-    position: relative;
-    padding-left: 16px;
-    padding-bottom: 34px;
-    &::before {
-        content: "";
-        position: absolute;
-        left: 3px;
-        top: 14px;
-        width: 1px;
-        height: 100%;
-        border-right: 1px dashed rgb(183, 189, 198);
-    }
-    &::after {
-        content: "";
-        position: absolute;
-        left: 0px;
-        top: 6px;
-        width: 8px;
-        height: 8px;
-        background: rgb(226 71 23);
-        border-radius: 50%;
-        z-index: 1;
-    }
+	display: flex;
+	position: relative;
+	padding-left: 16px;
+	padding-bottom: 34px;
+	&::before {
+		content: "";
+		position: absolute;
+		left: 3px;
+		top: 14px;
+		width: 1px;
+		height: 100%;
+		border-right: 1px dashed rgb(183, 189, 198);
+	}
+	&::after {
+		content: "";
+		position: absolute;
+		left: 0px;
+		top: 6px;
+		width: 8px;
+		height: 8px;
+		background: rgb(226 71 23);
+		border-radius: 50%;
+		z-index: 1;
+	}		
 `;
 
 export const ProvenanceContent = styled.div`
-    margin-left: 12px;
-    flex-grow: 1;
+	margin-left: 12px;
+	flex-grow: 1;
 `;
 
 export const ProvenanceName = styled.div`
-    font-size: 14px;
-    cursor: pointer;
-    span {
-        font-size: 14px;
-        color: grey;    
-    }
+	font-size: 16px;
+	cursor: pointer;
+	span {
+		font-size: 14px;
+		color: grey;    
+	}
 `;
 
 export const ProvenanceTime = styled.div`
     margin-top: 4px;
-    font-size: 12px;
+    font-size: 14px;
     color: grey;
 `;
 
@@ -560,7 +562,7 @@ export const ModalLabel = styled.div`
 export const ModalPrice = styled.div`
     font-weight: bold;
     font-size: 16px;
-    color: #1E2026;
+    color: var(--colorOrange);
 `;
 
 export const BidPrice = styled.div`
@@ -605,30 +607,47 @@ export const ModalActions = styled.div`
 `;
 
 export const ModalButton = styled.div`
-    background-image: linear-gradient(rgb(249, 141, 107) 0%, rgb(235, 97, 55) 100%);
-    padding: 16px 20px;
-    border-radius: 4px;
-    cursor: pointer;
-    font-weight: bold;
+	background-color: var(--colorOrange);
+	padding: 16px 20px;
+	border-radius: 4px;
+	cursor: pointer;	
+	color: white;
+	text-transform: uppercase;	
 `;
 
-export const ModalCancelButton = styled.div`
-    background-image: linear-gradient(rgb(219 219 219) 0%,rgb(184 184 184) 100%);
-    padding: 16px 20px;
-    margin-right: 12px;
-    border-radius: 4px;
-    cursor: pointer;
-    font-weight: bold;
-    width: 160px
+export const ModalCancelButton = styled.div`	
+	margin-right: 12px;	
+	
+	width: 160px;
+	border: 2px solid #eee;
+	color: #888;
+	padding: 12px 30px;
+	border-radius: 5px;
+	background-color: transparent !important;
+	cursor: pointer;
+	font-size: 15px;
+	transition: .9s;
+	position: relative;
+	letter-spacing: 1px;
+	outline: 0 !important;
+	overflow: hidden;
+	line-height: 1.4;
+  text-transform: uppercase;
 `;
 
 export const ModalSubmitButton = styled.div`
-    background-image: linear-gradient(rgb(249, 141, 107) 0%, rgb(235, 97, 55) 100%);
-    padding: 16px 20px;
-    border-radius: 4px;
-    cursor: pointer;
-    font-weight: bold;
-    width: 160px
+	background-color: var(--colorOrange);
+	padding: 12px 30px;
+	line-height: 1.4;
+	font-size: 15px;
+	border-radius: 4px;
+	cursor: pointer;	
+	color: white;
+	transition: .9s;
+	text-transform: uppercase;	
+	display: flex;
+	align-items: center;
+	jusitfy-content: center;
 `;
 
 
@@ -729,6 +748,7 @@ export const Input = styled.input`
 export const InputUnit = styled.div`
     font-size: 18px;
     font-weight: bold;
+		color: var(--colorOrange);
 `;
 
 export const SelectRow = styled.div`

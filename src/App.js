@@ -6,23 +6,23 @@ import { Modal } from '@material-ui/core';
 import Button from '@material-ui/core/button';
 import { makeStyles } from '@material-ui/core/styles';
 
-import { connectors, connectorLocalStorageKey } from './utils/connectors'
-import { useEagerConnect } from "./hooks/useEagerConnect"
-import { useInactiveListener } from "./hooks/useInactiveListener"
-import { useAxios } from "./hooks/useAxios";
-import { getErrorMessage } from "./utils/ethereum";
+import { connectors, connectorLocalStorageKey } from 'utils/connectors'
+import { useEagerConnect } from "hooks/useEagerConnect"
+import { useInactiveListener } from "hooks/useInactiveListener"
+import { useAxios } from "hooks/useAxios";
+import { getErrorMessage } from "utils/ethereum";
 
-import { getUser, loginUser, useAuthDispatch, useAuthState } from "./context/authContext";
+import { getUser, loginUser, useAuthDispatch, useAuthState } from "context/authContext";
 
-import Layout from "./components/Layout";
-import Create from "./pages/Create";
-import Mint from "./pages/Mint";
-import Profile from "./pages/Profile";
-import EditProfile from "./pages/EditProfile";
-import Detail from "./pages/Detail";
-import Home from "./pages/Home";
+import Layout from "components/Layout";
+import Create from "pages/Create";
+import Mint from "pages/Mint";
+import Profile from "pages/Profile";
+import EditProfile from "pages/EditProfile";
+import Detail from "pages/Detail";
+import Explore from 'pages/Explore'
 
-function App() {   
+function App() {
 
   const [connectModalOpen, setConnectModalOpen] = useState(null);
   const [errorModalOpen, setErrorModalOpen] = useState(null);
@@ -30,7 +30,7 @@ function App() {
 
   function getModalStyle() {
     const top = 50
-    const left = 50  
+    const left = 50
     return {
       top: `${top}%`,
       left: `${left}%`,
@@ -52,10 +52,10 @@ function App() {
 
   useAxios();
 
-  const {account, library, activate, active, connector} = useWeb3React();
+  const { account, library, activate, active, connector } = useWeb3React();
   const connectAccount = () => {
     setConnectModalOpen(true)
-  }  
+  }
   const connectToProvider = (connector) => {
     activate(connector)
   }
@@ -63,9 +63,9 @@ function App() {
   // handle logic to recognize the connector currently being activated
   const [activatingConnector, setActivatingConnector] = React.useState()
   useEffect(() => {
-      if (activatingConnector && activatingConnector === connector) {
-          setActivatingConnector(undefined)
-      }
+    if (activatingConnector && activatingConnector === connector) {
+      setActivatingConnector(undefined)
+    }
   }, [activatingConnector, connector])
 
   // mount only once or face issues :P
@@ -73,25 +73,25 @@ function App() {
   const { activateError } = useInactiveListener(!triedEager || !!activatingConnector)
 
   // handling connection error
-  if((triedEagerError || activateError) && errorModalOpen === null) {
-      const errorMsg = getErrorMessage(triedEagerError || activateError);
-      setNetworkError(errorMsg);
-      setErrorModalOpen(true);
+  if ((triedEagerError || activateError) && errorModalOpen === null) {
+    const errorMsg = getErrorMessage(triedEagerError || activateError);
+    setNetworkError(errorMsg);
+    setErrorModalOpen(true);
   }
 
   const dispatch = useAuthDispatch();
   const { user, token } = useAuthState();
 
   const login = async () => {
-    if(!account || !library) {
+    if (!account || !library) {
       console.log('not connected to wallet')
       return;
     }
-    if(!user) {
+    if (!user) {
       console.log('fetching user')
       await getUser(dispatch, account);
     }
-    if(!user?.nonce || token) {
+    if (!user?.nonce || token) {
       console.log('nonce is invalid or already logged in')
       return;
     }
@@ -99,8 +99,8 @@ function App() {
     loginUser(dispatch, account, user?.nonce, library.getSigner())
   }
 
-  useEffect(() => {      
-    if (active && account){
+  useEffect(() => {
+    if (active && account) {
       getUser(dispatch, account)
     }
   }, [active, account])
@@ -111,16 +111,17 @@ function App() {
   }
 
   return (
-    <React.Fragment>        
+    <React.Fragment>
       <Router>
-        <Switch>          
-          <Route path="/" exact render={(props) => (<Layout {...props} connectAccount={connectAccount}><Home {...props} user={user}/></Layout>)}/>
-          <Route path="/create" exact render={(props) => (<Layout {...props} connectAccount={connectAccount}><Create {...props} user={user}/></Layout>)}/>
-          <Route path="/mint" exact render={(props) => (<Layout {...props} connectAccount={connectAccount}><Mint {...props} user={user}/></Layout>)}/>
-          <Route path="/profile/:id" exact render={(props) => (<Layout {...props} connectAccount={connectAccount}><Profile {...props} getUser={getUser} user={user} login={login}/></Layout>)}/>
-          <Route path="/edit_profile" exact render={(props) => (<Layout {...props} connectAccount={connectAccount}><EditProfile {...props} getUser={getUser} user={user} login={login}/></Layout>)}/>
-          <Route path="/detail/:collection/:id" exact render={(props) => (<Layout {...props} connectAccount={connectAccount}><Detail {...props} user={user} /></Layout>)}/>
-        </Switch>                    
+        <Switch>
+          <Route path="/" exact render={(props) => (<Layout {...props} connectAccount={connectAccount}><Explore {...props} user={user} /></Layout>)} />
+          <Route path="/create" exact render={(props) => (<Layout {...props} connectAccount={connectAccount}><Create {...props} user={user} /></Layout>)} />
+          <Route path="/mint" exact render={(props) => (<Layout {...props} connectAccount={connectAccount}><Mint {...props} user={user} /></Layout>)} />
+          <Route path="/profile/:id" exact render={(props) => (<Layout {...props} connectAccount={connectAccount}><Profile {...props} getUser={getUser} user={user} login={login} /></Layout>)} />
+          <Route path="/edit_profile" exact render={(props) => (<Layout {...props} connectAccount={connectAccount}><EditProfile {...props} getUser={getUser} user={user} login={login} /></Layout>)} />
+          <Route path="/detail/:collection/:id" exact render={(props) => (<Layout {...props} connectAccount={connectAccount}><Detail {...props} user={user} /></Layout>)} />
+          <Route path="/explore" exact render={(props) => (<Layout {...props} connectAccount={connectAccount}><Explore {...props} user={user} /></Layout>)} />
+        </Switch>
       </Router>
 
       <Modal
@@ -128,18 +129,18 @@ function App() {
         onClose={(event, reason) => {
           if (reason === "backdropClick") {
             return false;
-          }      
+          }
           if (reason === "escapeKeyDown") {
             return false;
-          }      
+          }
           setErrorModalOpen(false)
         }}
         aria-labelledby="simple-modal-title"
         aria-describedby="simple-modal-description"
-        >
+      >
         <div style={modalStyle} className={`${classes.paper} modal-div`}>
           <p>{networkError}</p>
-          <Button className="" onClick={closeErrorModal} variant="contained" color="primary">Close</Button>            
+          <Button className="" onClick={closeErrorModal} variant="contained" color="primary">Close</Button>
         </div>
 
       </Modal>
@@ -148,47 +149,45 @@ function App() {
         onClose={(event, reason) => {
           if (reason === "backdropClick") {
             return false;
-          }      
+          }
           if (reason === "escapeKeyDown") {
             return false;
-          }      
+          }
           setConnectModalOpen(false)
-        }}        
+        }}
         aria-labelledby="simple-modal-title"
         aria-describedby="simple-modal-description"
-        >
+      >
         <div style={modalStyle} className={`${classes.paper} modal-div`}>
-          <div className={`connectors-wrapper`} style = {{display : 'grid'}}>
-          {
-            connectors.map((entry, index) => (
-              <Button
-                key={index}
-                variant="outlined"
-                onClick={() => {
-                  connectToProvider(entry.connectorId);
-                  window.localStorage.setItem(connectorLocalStorageKey, entry.key);
-                  setConnectModalOpen(false)                               
-                }}
-                className="connect-button textPrimary"
-                color="primary"
-                style={{color: 'red', marginBottom: '10px'}}
-                endIcon={<entry.icon width="30"/>}
-                id={`wallet-connect-${entry.title.toLocaleLowerCase()}`}
-              >
-              {entry.title}
-              </Button>
-            ))}
-            </div>
-            <div style={{textAlign: 'center'}}>
-              <Button className="mt-3" onClick={() => {setConnectModalOpen(false)}} variant="contained" color="primary">Close</Button>
-            </div>
-          
+          <div className={`connectors-wrapper`} style={{ display: 'grid' }}>
+            {
+              connectors.map((entry, index) => (
+                <Button
+                  key={index}
+                  variant="outlined"
+                  onClick={() => {
+                    connectToProvider(entry.connectorId);
+                    window.localStorage.setItem(connectorLocalStorageKey, entry.key);
+                    setConnectModalOpen(false)
+                  }}
+                  className="connect-button textPrimary"
+                  color="primary"
+                  style={{ color: 'red', marginBottom: '10px' }}
+                  endIcon={<entry.icon width="30" />}
+                  id={`wallet-connect-${entry.title.toLocaleLowerCase()}`}
+                >
+                  {entry.title}
+                </Button>
+              ))}
+          </div>
+          <div style={{ textAlign: 'center' }}>
+            <Button className="mt-3" onClick={() => { setConnectModalOpen(false) }} variant="contained" color="primary">Close</Button>
+          </div>
+
         </div>
       </Modal>
-    
     </React.Fragment>
   );
-  
 }
 
 export default App;

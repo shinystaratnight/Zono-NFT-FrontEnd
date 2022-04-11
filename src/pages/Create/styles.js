@@ -1,20 +1,43 @@
 import styled from 'styled-components';
-import {PlusCircle} from "@styled-icons/feather";
+import { PlusCircle } from "@styled-icons/feather";
+
+export const ContentsWrapper = styled.div`
+	padding: 120px 0;
+	@media screen and (max-width: 991px) {
+		padding: 60px 0;
+	}
+`
 
 export const Container = styled.div`
-    margin 48px auto;
-    max-width: 1200px;
+	margin 48px auto;
+	max-width: 1200px;
 `;
 
 export const Title = styled.div`
-    text-align: center;
-    font-size: 24px;
-    margin-bottom: 20px;
-    font-weight: bold;
+	text-align: center;
+	font-size: 42px;
+	font-weight: 700;
+	color: #222;
+	letter-spacing: .5px;
+	margin-bottom: 20px;
+	@media screen and (max-width: 575px) {
+		font-size: 30px;
+	}
 `;
-
+export const FormCard = styled.div`
+	background-color: #fff;
+	padding: 30px;
+	border: 1px solid #eaeff5;
+	box-shadow: 0 4px 10px 0 rgb(41 128 185 / 7%);
+	border-radius: 6px;
+	margin-top: 12px;
+	@media screen and (max-width: 575px) {
+		padding-left: 20px;
+		padding-right: 20px;
+	}
+`
 export const UploadField = styled.div`
-    margin: 40px 20px;
+    margin: 40px 0px;
 `;
 
 export const SelectCollection = styled.div`
@@ -67,13 +90,14 @@ export const CollectionType = styled.div`
 
 
 export const UploadContainer = styled.div`
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    border: dotted 1px grey;
-    border-radius: 12px;
-    height: 200px;
+	background-color: rgb(57 72 104 / 2%);
+	padding: 30px 30px;
+	border-radius: 6px 6px;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;  
+	height: 200px;
 `;
 
 export const PreviewContainer = styled.div`
@@ -119,19 +143,23 @@ export const AudioPreview = styled.audio`
 
 export const ChooseFileBtn = styled.div`
   display: inline-block;
-    position: relative;
-    padding: 10px 20px;
-    background: #b6d5ff;
-    border-radius: 20px;
-    margin-top: 20px;
-    color: #e24717;
-    font-size: 14px;
-    font-weight: bold;
+	position: relative;
+	padding: 10px 20px;
+	background: var(--colorOrange);
+	border-radius: 20px;
+	margin-top: 10px;
+	margin-bottom: 10px;
+	color: #fff;
+	font-size: 14px;
+	font-weight: bold;
+	cursor: pointer;
 `;
 
 export const UploadCaption = styled.div`
-    font-size: 14px;
-    color: grey;
+	font-size: 15px;
+	color: #777;
+	line-height: 1.6;
+	text-align: center;
 `;
 
 export const FileInput = styled.input`
@@ -152,13 +180,11 @@ export const Field = styled.div`
 `;
 
 export const label = styled.div`
-    font-size: 16px;
-    font-weight: bold;
-    margin-bottom: 12px;
-    span{
-        color: grey;
-        font-size: 14px;
-    }
+	display: block;
+	font-size: 15px;
+	color: #818992;
+	margin-bottom: 8px;
+	text-transform: capitalize; 
 `;
 
 export const Input = styled.input`
@@ -182,29 +208,37 @@ export const Option = styled.div`
 `;
 
 export const Actions = styled.div`
-    display: flex;
-    justify-content: center;
-    margin: 20px 0; 
+	display: flex;
+	justify-content: center;
+	margin: 30px 0 0; 
 `;
 
 export const CreateBtn = styled.div`
-    padding: 12px 40px;
-    background: #e24717;
-    font-size: 20px;
-    color: white;
-    border-radius: 24px;
-    cursor: pointer;
+	cursor: pointer;
+	background-color: var(--colorOrange);
+	margin-left: 12px;
+	padding: 12px 30px;
+	line-height: 1.4;
+	font-size: 15px;
+	border: none;
+	border-radius: 5px;
+	text-transform: uppercase;
+	transition: .9s;
+	color: #fff;
+	letter-spacing: 1px;
+	outline: 0 !important;
+	overflow: hidden;
 `;
 
 export const SelectCategory = styled.select`
-    width: 100%;
-    border: unset;
-    border-bottom: 1px solid rgb(234, 236, 239);
-    font-size: 14px;
-    padding: 8px;
-    &:focus-visible{
-        outline: unset;
-    }
+	width: 100%;
+	border: unset;
+	border-bottom: 1px solid rgb(234, 236, 239);
+	font-size: 14px;
+	padding: 8px;
+	&:focus-visible{
+			outline: unset;
+	}
 `;
 
 

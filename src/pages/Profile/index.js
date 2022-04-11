@@ -1,77 +1,155 @@
-/* eslint-disable react-hooks/exhaustive-deps */
-import React , {useState,useEffect} from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { ethers } from "ethers";
-import {useParams} from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { useWeb3React } from '@web3-react/core'
 import axios from 'axios'
-import { Link } from "react-router-dom";
+import { slice } from 'lodash'
 
-import * as HomeElement from '../Home/styles';
-import Nft from "../Home/nft";
-import { getTokenBalance } from "../../utils/contracts";
-import { shorter, formatNum } from "../../utils";
+import { getTokenBalance } from "utils/contracts";
+import { shorter, formatNum } from "utils";
 
+import { GridContainer, GridRow, GridItem } from 'components/Grid'
+import FilterBox from 'components/FilterBox'
+import SearchForm from 'components/SearchForm'
+import NftGridCard from 'components/NftGridCard'
+import NftListCard from 'components/NftListCard'
+import Pagination from 'components/Pagination'
+import SaleTypesFilter from 'components/SaleTypesFilter'
 import * as Element from "./styles";
 
-import FilterIcon from "../../assets/images/filter.png";
-import CopyIcon from "../../assets/images/copyIcon.png";
+import CopyIcon from "assets/images/copyIcon.png";
 
 const SELECT_SALE_TYPES = [
-  {value: 'fixed', text: 'Fixed Price'},
-  {value: 'auction', text: 'Live Auction'}
+  { value: 'fixed', text: 'Fixed Price' },
+  { value: 'auction', text: 'Live Auction' }
 ];
 
 const SELECT_ORDER_BY_ITEMS = [
-  {value: 'timestamp', text: 'Recently listed'},
-  {value: 'likeCount', text: 'Most favorited'},
-  {value: 'name', text: 'Name'},
+  { value: 'timestamp', text: 'Recently listed' },
+  { value: 'likeCount', text: 'Most favorited' },
+  { value: 'name', text: 'Name' },
 ];
 
-function Profile(props) {
+const SELECT_ITEM_TYPE = [
+  { value: 'owned', text: 'Owned' },
+  { value: 'onSale', text: 'On Sale' },
+  { value: 'created', text: 'Created' },
+  { value: 'liked', text: 'Liked' },
+]
+
+const Profile = (props) => {
+
   let { id } = useParams();
-  const { user, login } = props;
+  const { user } = props;
+
   const [userProfile, setUserProfile] = useState(undefined)
   const { account, chainId, library } = useWeb3React();
   const [balance, setBalance] = useState()
   const [etherBalance, setEtherBalance] = useState()
 
-  const [curTab, setCurTab] = useState(1); // 1: Owned, 2: On sale, 3: Created, 4: Liked
-
-  const [showFilter, setShowFilter] = useState(false);
-  const [showSortBy, setShowSortBy] = useState(false);
-
-  const [filters, setFilters] = useState({
-      saleType: null, 
-  });
-  const [selectedFilters, setSelectedFilters] = useState({
-      saleType: null, 
-  });
-  
-  const [items, setItems] = useState([]) 
-  const [searchTxt, setSearchTxt] = useState("")   
-  const [tempSearchTxt, setTempSearchTxt] = useState("") 
-  const [sortBy, setSortBy] = useState("timestamp") 
-  const [sortByText, setSortByText] = useState("Recently listed")
-
+  const [items, setItems] = useState([])
   const [page, setPage] = useState(1)
-  const [noItems, setNoItems] = useState(false)
-  const [initialItemsLoaded, setInitialItemsLoaded] = useState(false)
+  const [pageSize, setPageSize] = useState(9)
+  const [startIndex, setStartIndex] = useState(0)
+  const [endIndex, setEndIndex] = useState(pageSize)
+  const [viewMethod, setViewMethod] = useState('grid')
+  const [searchText, setSearchText] = useState("")
+  const [saleType, setSaleType] = useState(['fixed', 'auction']);
+  const [sortBy, setSortBy] = useState("timestamp")
+  const [itemType, setItemType] = useState('owned')
   const [loading, setLoading] = useState(false)
 
-  useEffect(() => {        
-    if (!userProfile){
-      getUser()
-    }        
-  }, [user])
+  const getUser = useCallback(() => {
+    axios.get(`/api/user/${id ? id : ""}`)
+      .then(res => {
+        setUserProfile(res.data.user)
+      })
+  }, [id])
 
-  useEffect(() => {
-    if(!!user) {
-      login();
+  const copyToClipboard = (text) => {
+    var textField = document.createElement('textarea')
+    textField.innerText = text
+    document.body.appendChild(textField)
+    textField.select()
+    document.execCommand('copy')
+    textField.remove()
+  }
+
+  const fetchItems = useCallback((searchTextKey, itemTypeKey, saleTypeKey, sortByKey) => {
+
+    setLoading(true)
+
+    let paramData = { sortDir: 'desc' }
+
+    if (sortByKey) {
+      paramData.sortBy = sortByKey
     }
-  }, [user, account, library])
+    if (searchTextKey) {
+      paramData.searchTxt = searchTextKey
+    }
+
+    switch (itemTypeKey) {
+      case 'owned':
+        // Owned
+        paramData.owner = id;
+        break;
+      case 'onSale':
+        // On sale
+        paramData.itemOwner = id;
+        paramData.saleType = 'all';
+        break;
+      case 'created':
+        // Created
+        paramData.creator = id;
+        break;
+      case 'liked':
+        // Liked
+        paramData.likes = id;
+        break;
+      default:
+        break;
+    }
+
+    if (saleTypeKey.length === 1) {
+      paramData.saleType = saleTypeKey[0];
+    } else if (saleTypeKey.length === 2) {
+      paramData.saleType = 'all'
+    }
+
+    axios.get("/api/item", {
+      params: paramData
+    })
+      .then(res => {
+        setItems(res.data.items)
+        setPage(1)
+        setStartIndex(0)
+        setEndIndex(pageSize)
+        setLoading(false)
+      })
+      .catch(() => {
+        setItems([])
+        setLoading(false)
+      })
+  }, [id, pageSize])
+
+  const onChangePagination = (pageNum) => {
+    setPage(pageNum)
+    setStartIndex((pageNum - 1) * pageSize)
+    setEndIndex(pageNum * pageSize)
+  }
 
   useEffect(() => {
-    if(!!account && !!library) {
+    fetchItems(searchText, itemType, saleType, sortBy)
+  }, [fetchItems, itemType, saleType, sortBy, searchText])
+
+  useEffect(() => {
+    if (!userProfile) {
+      getUser()
+    }
+  }, [user, userProfile, getUser])
+
+  useEffect(() => {
+    if (!!account && !!library) {
       getTokenBalance(account, chainId, library.getSigner())
         .then((balance) => {
           setBalance(balance)
@@ -80,9 +158,9 @@ function Profile(props) {
           setBalance(null)
         })
       library.getBalance(account)
-        .then((balance) => {  
-          const etherVal = parseFloat(ethers.utils.formatEther(balance));      
-          setEtherBalance(etherVal.toFixed(4));        
+        .then((balance) => {
+          const etherVal = parseFloat(ethers.utils.formatEther(balance));
+          setEtherBalance(etherVal.toFixed(4));
         })
         .catch(() => {
           setEtherBalance(null)
@@ -94,259 +172,148 @@ function Profile(props) {
     }
   }, [account, chainId, library])
 
-  function getUser(){
-    axios.get(`/api/user/${id ? id : ""}`)
-    .then(res => {
-      setUserProfile(res.data.user)                
-    })
-  }
-
-  function onSetSaleType(saleType) {
-    if (filters.saleType && (filters.saleType?.value === saleType.value)) {
-        setFilters({ saleType:null })
-    } else {
-        setFilters({ saleType:saleType })
-    }  
-  }
-
-  function removeSaleType() {
-    setFilters({ saleType:null })
-    setSelectedFilters({ saleType:null })        
-  }
-
-  function onSetSelectedFilters() {
-    setShowFilter(false)
-    setSelectedFilters(filters)        
-  }
-  function onClearAll() {
-    setFilters({saleType: null})
-    setSelectedFilters({saleType: null})
-  }
-
-  useEffect(() => {    
-    setItems([]);
-    setNoItems(false)
-    setInitialItemsLoaded(false);
-    setLoading(true);
-    setPage(1);
-    fetchItems(true); 		   
-  }, [id, selectedFilters, searchTxt, sortBy, curTab])
-
-  useEffect(() => {
-    setLoading(true)    
-    if (initialItemsLoaded) {
-      fetchItems(false); 	   
-    }
-  }, [page])
-
-  function fetchItems(reset) {
-    let paramData = {sortDir:'desc'}
-
-    if (sortBy) {
-      paramData.sortBy = sortBy            
-    }
-    if (searchTxt) {
-      paramData.searchTxt = searchTxt            
-    }   
-    
-    switch (curTab) {
-      case 1:
-        // Owned
-        paramData.owner = id;
-        break;
-      case 2:
-        // On sale
-        paramData.itemOwner = id;
-        paramData.saleType = 'all'; 
-        break;
-      case 3:
-        // Created
-        paramData.creator = id;
-        break;
-      case 4:
-        // Liked
-        paramData.likes = id; 
-        break;
-      default:
-        break;
-    }    
-
-    if (selectedFilters.saleType) {
-      paramData.saleType = selectedFilters.saleType.value            
-    }
-
-    if (reset) {
-      paramData.page = 1 ;            
-    } else {
-      paramData.page = page ;
-    }
-    
-    axios.get("/api/item", {
-      params: paramData
-    })
-    .then(res => {            
-      setLoading(false)  
-      
-      if (res.data.items.length === 0) setNoItems(true)      
-      if (reset){        
-          setItems(res.data.items)
-          setInitialItemsLoaded(true)
-      }else{
-          let prevArray = JSON.parse(JSON.stringify(items))
-          prevArray.push(...res.data.items)
-          setItems(prevArray)        
-      }            
-    })
-    .catch(err => {            
-      setLoading(false) 
-      
-      console.log(err)  
-      setNoItems(true)      
-    })
-  }
-
-  function loadMore() {
-    if (!loading) {
-      setPage(page => {return (page + 1)}) 
-    }      
-  }
-
-  const copyToClipboard = (text) => {
-    console.log('text', text)
-    var textField = document.createElement('textarea')
-    textField.innerText = text
-    document.body.appendChild(textField)
-    textField.select()
-    document.execCommand('copy')
-    textField.remove()
-  }
   return (
     <Element.ProfilePageWrap>
       <Element.ProfileBanner>
-        <Element.Container>
-          <div className="inner-wrap">
-            <div className="content-box">
-              <div className="profile-box">
-                <img
-                  className="profileimg"
+        <GridContainer>
+          <Element.InnerWrap>
+            <Element.ProfileContentBox>
+              <Element.ProfileBox>
+                <Element.ProfileImg
                   src={userProfile && userProfile.profilePic ? userProfile.profilePic : "/images/profile.png"}
                   alt="ProfileImage"
                 />
-                <div className="profileInfo-box">
-                  <h1>{userProfile && userProfile.name ? userProfile.name : "NoName"}</h1>
-                  <div className="pinId">
-                    <span className="uid">{`${shorter(id)}`}</span>
-                    <span className="copy-button">
-                      <img src={CopyIcon} alt="ProfileImage" onClick={() => copyToClipboard(id)}/>
-                    </span>
+                <div>
+                  <Element.UserName>{userProfile && userProfile.name ? userProfile.name : "NoName"}</Element.UserName>
+                  <Element.PinIdBox>
+                    <Element.UidValue>{`${shorter(id)}`}</Element.UidValue>
+                    <Element.CopyButton>
+                      <img src={CopyIcon} alt="ProfileImage" onClick={() => copyToClipboard(id)} />
+                    </Element.CopyButton>
                     <span className="email">{userProfile && userProfile.socialLink ? userProfile.socialLink : ""}</span>
-                  </div>
-                  <span className="uid">Balance : {formatNum(balance)} {process.env.REACT_APP_TOKEN} , {formatNum(etherBalance)} BNB</span>
+                  </Element.PinIdBox>
+                  <Element.BalanceValue>Balance : {formatNum(balance)} {process.env.REACT_APP_TOKEN} , {formatNum(etherBalance)} BNB</Element.BalanceValue>
                 </div>
-              </div>
-            </div>
-            <div className="button-box">
-              <Link to="/edit_profile" className="cta-button setting-button">
+              </Element.ProfileBox>
+            </Element.ProfileContentBox>
+            <Element.SettingBox>
+              <Element.SettingLink to="/edit_profile">
                 Setting
-              </Link>
-            </div>
-          </div>
-        </Element.Container>
+              </Element.SettingLink>
+            </Element.SettingBox>
+          </Element.InnerWrap>
+        </GridContainer>
       </Element.ProfileBanner>
 
-      <Element.HomeCardList>
-        <Element.Container>
-          <div className="tabBox">
-            <div className="tabContent">
-              <div className="resultCountBox">
-                <div className="resultCountLinks">
-                  <div className={curTab === 1 ? 'link is-active' : 'link'} onClick={() => setCurTab(1)}>
-                    Owned
-                  </div>
-                  <div className={curTab === 2 ? 'link is-active' : 'link'} onClick={() => setCurTab(2)}>
-                    On Sale
-                  </div>
-                  <div className={curTab === 3 ? 'link is-active' : 'link'} onClick={() => setCurTab(3)}>
-                    Created
-                  </div>
-                  <div className={curTab === 4 ? 'link is-active' : 'link'} onClick={() => setCurTab(4)}>
-                    Liked
-                  </div>
-                </div>                
-              </div>
-              
-              <div className="filterBox">
-                <div className="item-box" onClick={() => setShowSortBy(false)}>
-                  <input type="text" value={tempSearchTxt} className="form-search" placeholder="Search Items" onChange={event => {setTempSearchTxt(event.target.value)}} onKeyDown={event => {
-                    if (event.key === 'Enter')
-                      setSearchTxt(event.target.value)
-                  }}/>
-                </div>
-                <div className="item-box" onClick={() => setShowSortBy(false)}>
-                  <button className="cta-button filter-button" onClick={() => setShowFilter(!showFilter)}><img src={FilterIcon} alt="FilterIcon" /> Filters</button>
-                </div>
-                <div className="item-box">                      
-                  <button className="cta-button filter-button" onClick={() => setShowSortBy(!showSortBy)}> {sortByText}</button>
-                  <HomeElement.DropDownMenus style={{display : showSortBy ? '' : 'none'}}>
-                  {
-                    SELECT_ORDER_BY_ITEMS.map(o => <HomeElement.DropDownMenu
-                        onClick={() => { setSortBy(o.value); setSortByText(o.text); setShowSortBy(false)}}>
-                        {o.text}
-                      </HomeElement.DropDownMenu> )
-                  }                                          
-                  </HomeElement.DropDownMenus>                      
-                </div>
+      <Element.CardSection>
+        <GridContainer>
+          <GridRow>
+            <GridItem xl={3} lg={4} md={4} sm={12}>
+              <FilterBox
+                title='Types'
+                name='type'
+                filterOptions={SELECT_ITEM_TYPE}
+                handleChange={(e) => {
+                  fetchItems(searchText, e.target.value, saleType, sortBy)
+                  setItemType(e.target.value)
+                }}
+                value={itemType}
+              />
+              <SaleTypesFilter
+                title='Sale Types'
+                name='saleType'
+                filterOptions={SELECT_SALE_TYPES}
+                handleChange={(e) => {
+                  let newSaleTypes = []
+
+                  if (saleType.includes(e.target.value)) {
+                    newSaleTypes = saleType.filter((val) => val !== e.target.value)
+                  } else {
+                    newSaleTypes = [...saleType, e.target.value]
+                  }
+
+                  fetchItems(searchText, itemType, newSaleTypes, sortBy)
+                  setSaleType(newSaleTypes)
+                }}
+                values={saleType}
+              />
+              <FilterBox
+                title='Sort By'
+                name='sortBy'
+                filterOptions={SELECT_ORDER_BY_ITEMS}
+                handleChange={(e) => {
+                  fetchItems(searchText, itemType, saleType, e.target.value)
+                  setSortBy(e.target.value)
+                }}
+                value={sortBy}
+              />
+            </GridItem>
+
+            <GridItem xl={9} lg={8} md={8} sm={12}>
+              <Element.SearchFormWrapper>
+                <SearchForm
+                  onSelectView={(view) => {
+                    setPageSize(view === 'grid' ? 9 : 5)
+                    setPage(1)
+                    setStartIndex(0)
+                    setEndIndex(view === 'grid' ? 9 : 5)
+                    setViewMethod(view)
+                  }}
+                  onChangeInput={(val) => {
+                    fetchItems(val, itemType, saleType, sortBy)
+                    setSearchText(val)
+                  }}
+                  viewMethod={viewMethod}
+                />
+              </Element.SearchFormWrapper>
+
+              <Element.NftCardList>
                 {
-                  showFilter &&
-                  <HomeElement.FilterContent>
-                    <HomeElement.FilterFooter>
-                      <HomeElement.FilterCurrencyContainer>
-                        <HomeElement.FilterLabel>Sale Types: </HomeElement.FilterLabel>
-                        <HomeElement.FilterCurrencies>
-                        {
-                          SELECT_SALE_TYPES.map((saleType, index) => <HomeElement.FilterCategory key={index} onClick={() => onSetSaleType(saleType)} className={filters.saleType?.value === saleType.value?'active':''}>{saleType.text}</HomeElement.FilterCategory>)
-                        }                                            
-                        </HomeElement.FilterCurrencies>                                        
-                      </HomeElement.FilterCurrencyContainer>
-                      <button className="cta-button" onClick={() => onSetSelectedFilters()}>Ok</button>
-                    </HomeElement.FilterFooter>                            
-                  </HomeElement.FilterContent>
+                  loading ? (
+                    <Element.LoadingLabel>Loading...</Element.LoadingLabel>
+                  ) : (
+                    <>
+                      <Element.TabContent>
+                        <Element.TabPane active={viewMethod === 'grid'}>
+                          <GridRow>
+                            {
+                              slice(items, startIndex, endIndex).map((item, index) => (
+                                <GridItem xl={4} lg={4} md={4} sm={6} xs={12} key={`grid-${index}`}>
+                                  <NftGridCard item={item} />
+                                </GridItem>
+                              ))
+                            }
+                          </GridRow>
+                        </Element.TabPane>
+                        <Element.TabPane active={viewMethod === 'list'}>
+                          <GridRow>
+                            {
+                              slice(items, startIndex, endIndex).map((item, index) => (
+                                <GridItem xl={12} lg={12} md={12} sm={12} xs={12} key={`grid-${index}`}>
+                                  <NftListCard item={item} />
+                                </GridItem>
+                              ))
+                            }
+                          </GridRow>
+                        </Element.TabPane>
+                      </Element.TabContent>
+                      <Element.PaginationBox>
+                        <Pagination
+                          page={page}
+                          handleChange={(_, pageNum) => onChangePagination(pageNum)}
+                          count={Math.ceil(items.length / pageSize)}
+                        />
+                      </Element.PaginationBox>
+                    </>
+                  )
                 }
-              </div>
-              {
-                selectedFilters.saleType &&
-                <HomeElement.FilterString>
-                  {
-                    selectedFilters.saleType &&
-                    <HomeElement.FilterStringItem>
-                      <label>Sale Type: </label>
-                      <HomeElement.FilterValue>{selectedFilters.saleType.text}<HomeElement.RemoveIcon size={12} onClick={() => removeSaleType()}/></HomeElement.FilterValue>
-                    </HomeElement.FilterStringItem>
-                  }                        
-                  <HomeElement.FilterClearAll onClick={() => onClearAll()} >
-                    clear all
-                  </HomeElement.FilterClearAll>
-                </HomeElement.FilterString>
-              }
-              
-              <div className="cardList">
-              {
-                items.map((item, index)=> <Nft key={index} {...props} item={item} />)                        
-              }
-              </div>                
-               
-              <div className="cardList" style={{display: noItems ? "none" : ""}}>
-                <button className="cta-button"  onClick={() => loadMore()}>
-                  {loading ? "Loading..." : "Load more"}
-                </button>
-              </div>           
-            </div>
-          </div>
-        </Element.Container>
-      </Element.HomeCardList>        
+              </Element.NftCardList>
+            </GridItem>
+          </GridRow>
+        </GridContainer>
+      </Element.CardSection>
     </Element.ProfilePageWrap>
-  );
-  
+  )
 }
 
-export default Profile;
+export default Profile
