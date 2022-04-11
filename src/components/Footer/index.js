@@ -61,7 +61,7 @@ const Footer = () => {
           <GridRow>
             <GridItem xl={12} lg={12} md={12} sm={12} xs={12}>
               <RightInfoText>
-                © 2021 ZonoSwap, All Rights Reserved
+                © 2022 ZonoSwap, All Rights Reserved
               </RightInfoText>
             </GridItem>
           </GridRow>

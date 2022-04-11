@@ -1,5 +1,4 @@
 import styled from 'styled-components';
-import { Link } from "react-router-dom";
 
 export const NavbarWrapper = styled.div`
   padding: 20px 0;

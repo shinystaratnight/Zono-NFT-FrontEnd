@@ -21,6 +21,7 @@ import Profile from "pages/Profile";
 import EditProfile from "pages/EditProfile";
 import Detail from "pages/Detail";
 import Explore from 'pages/Explore'
+import ConnectDialog from 'components/ConnectDialog'
 
 function App() {
 
@@ -144,9 +145,10 @@ function App() {
         </div>
 
       </Modal>
-      <Modal
+
+      <ConnectDialog
         open={!!connectModalOpen}
-        onClose={(event, reason) => {
+        handleClose={(event, reason) => {
           if (reason === "backdropClick") {
             return false;
           }
@@ -155,37 +157,10 @@ function App() {
           }
           setConnectModalOpen(false)
         }}
-        aria-labelledby="simple-modal-title"
-        aria-describedby="simple-modal-description"
-      >
-        <div style={modalStyle} className={`${classes.paper} modal-div`}>
-          <div className={`connectors-wrapper`} style={{ display: 'grid' }}>
-            {
-              connectors.map((entry, index) => (
-                <Button
-                  key={index}
-                  variant="outlined"
-                  onClick={() => {
-                    connectToProvider(entry.connectorId);
-                    window.localStorage.setItem(connectorLocalStorageKey, entry.key);
-                    setConnectModalOpen(false)
-                  }}
-                  className="connect-button textPrimary"
-                  color="primary"
-                  style={{ color: 'red', marginBottom: '10px' }}
-                  endIcon={<entry.icon width="30" />}
-                  id={`wallet-connect-${entry.title.toLocaleLowerCase()}`}
-                >
-                  {entry.title}
-                </Button>
-              ))}
-          </div>
-          <div style={{ textAlign: 'center' }}>
-            <Button className="mt-3" onClick={() => { setConnectModalOpen(false) }} variant="contained" color="primary">Close</Button>
-          </div>
-
-        </div>
-      </Modal>
+        connectors={connectors}
+        connectToProvider={connectToProvider}
+        connectorLocalStorageKey={connectorLocalStorageKey}
+      />    
     </React.Fragment>
   );
 }

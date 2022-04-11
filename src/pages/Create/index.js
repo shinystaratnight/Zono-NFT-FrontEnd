@@ -2,12 +2,11 @@
 import React, { useState } from "react";
 import { useWeb3React } from '@web3-react/core'
 import CloseIcon from '@material-ui/icons/Close';
-import IconButton from '@material-ui/core/IconButton';
 import CircularProgress from '@material-ui/core/CircularProgress';
-import Snackbar from '@material-ui/core/Snackbar';
 
 import { GridContainer, GridRow, GridItem } from 'components/Grid'
 import TextField from 'components/TextField'
+import CustomSnackbar from 'components/CustomSnackbar'
 import * as Element from "./styles";
 
 import { getIpfsHash, getIpfsHashFromFile } from "utils/ipfs";
@@ -164,26 +163,13 @@ function Create(props) {
 							</Element.FormCard>
 						</GridItem>
 					</GridRow>
-				}
-
-				<Snackbar
-					anchorOrigin={{
-						vertical: 'bottom',
-						horizontal: 'center'
-					}}
-					open={openSnackbar}
-					autoHideDuration={3000}
-					onClose={handleCloseDialog}
-					message={snackBarMessage}
-					action={
-						<React.Fragment>
-							<IconButton size="small" aria-label="close" color="inherit" onClick={handleCloseDialog}>
-								<CloseIcon fontSize="small" />
-							</IconButton>
-						</React.Fragment>
-					}
-				/>
+				}			
 			</GridContainer>
+			<CustomSnackbar 
+				open={openSnackbar}
+				handleClose={handleCloseDialog}
+				message={snackBarMessage}
+			/>
 		</Element.ContentsWrapper>
 	);
 

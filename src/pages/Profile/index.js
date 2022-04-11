@@ -9,26 +9,12 @@ import { getTokenBalance } from "utils/contracts";
 import { shorter, formatNum } from "utils";
 
 import { GridContainer, GridRow, GridItem } from 'components/Grid'
-import FilterBox from 'components/FilterBox'
 import SearchForm from 'components/SearchForm'
 import NftGridCard from 'components/NftGridCard'
-import NftListCard from 'components/NftListCard'
 import Pagination from 'components/Pagination'
-import SaleTypesFilter from 'components/SaleTypesFilter'
 import * as Element from "./styles";
 
 import CopyIcon from "assets/images/copyIcon.png";
-
-const SELECT_SALE_TYPES = [
-  { value: 'fixed', text: 'Fixed Price' },
-  { value: 'auction', text: 'Live Auction' }
-];
-
-const SELECT_ORDER_BY_ITEMS = [
-  { value: 'timestamp', text: 'Recently listed' },
-  { value: 'likeCount', text: 'Most favorited' },
-  { value: 'name', text: 'Name' },
-];
 
 const SELECT_ITEM_TYPE = [
   { value: 'owned', text: 'Owned' },
@@ -53,9 +39,7 @@ const Profile = (props) => {
   const [startIndex, setStartIndex] = useState(0)
   const [endIndex, setEndIndex] = useState(pageSize)
   const [viewMethod, setViewMethod] = useState('grid')
-  const [searchText, setSearchText] = useState("")
-  const [saleType, setSaleType] = useState(['fixed', 'auction']);
-  const [sortBy, setSortBy] = useState("timestamp")
+  const [searchText, setSearchText] = useState("")  
   const [itemType, setItemType] = useState('owned')
   const [loading, setLoading] = useState(false)
 
@@ -75,15 +59,16 @@ const Profile = (props) => {
     textField.remove()
   }
 
-  const fetchItems = useCallback((searchTextKey, itemTypeKey, saleTypeKey, sortByKey) => {
+  const fetchItems = useCallback((searchTextKey, itemTypeKey) => {
 
     setLoading(true)
 
-    let paramData = { sortDir: 'desc' }
+    let paramData = { 
+      sortDir: 'desc',
+      sortBy: 'timestamp',
+      saleType: 'all'
+    }   
 
-    if (sortByKey) {
-      paramData.sortBy = sortByKey
-    }
     if (searchTextKey) {
       paramData.searchTxt = searchTextKey
     }
@@ -108,18 +93,13 @@ const Profile = (props) => {
         break;
       default:
         break;
-    }
-
-    if (saleTypeKey.length === 1) {
-      paramData.saleType = saleTypeKey[0];
-    } else if (saleTypeKey.length === 2) {
-      paramData.saleType = 'all'
-    }
+    }  
 
     axios.get("/api/item", {
       params: paramData
     })
       .then(res => {
+        console.log(res)
         setItems(res.data.items)
         setPage(1)
         setStartIndex(0)
@@ -139,8 +119,8 @@ const Profile = (props) => {
   }
 
   useEffect(() => {
-    fetchItems(searchText, itemType, saleType, sortBy)
-  }, [fetchItems, itemType, saleType, sortBy, searchText])
+    fetchItems(searchText, itemType)
+  }, [fetchItems, itemType, searchText])
 
   useEffect(() => {
     if (!userProfile) {
@@ -208,62 +188,35 @@ const Profile = (props) => {
       <Element.CardSection>
         <GridContainer>
           <GridRow>
-            <GridItem xl={3} lg={4} md={4} sm={12}>
-              <FilterBox
-                title='Types'
-                name='type'
-                filterOptions={SELECT_ITEM_TYPE}
-                handleChange={(e) => {
-                  fetchItems(searchText, e.target.value, saleType, sortBy)
-                  setItemType(e.target.value)
-                }}
-                value={itemType}
-              />
-              <SaleTypesFilter
-                title='Sale Types'
-                name='saleType'
-                filterOptions={SELECT_SALE_TYPES}
-                handleChange={(e) => {
-                  let newSaleTypes = []
+            <GridItem xl={12} lg={12} md={12} sm={12}>
+              <Element.TabList>
+                {
+                  SELECT_ITEM_TYPE.map((item) => (
+                    <Element.TabLink
+                      key={item.value}
+                      active={itemType === item.value}
+                      onClick={() => { 
+                        fetchItems(searchText, item.value)
+                        setItemType(item.value) 
+                      }}
+                    >
+                      { item.text }
+                    </Element.TabLink>
+                  ))
+                }
+              </Element.TabList>
+            </GridItem>          
 
-                  if (saleType.includes(e.target.value)) {
-                    newSaleTypes = saleType.filter((val) => val !== e.target.value)
-                  } else {
-                    newSaleTypes = [...saleType, e.target.value]
-                  }
-
-                  fetchItems(searchText, itemType, newSaleTypes, sortBy)
-                  setSaleType(newSaleTypes)
-                }}
-                values={saleType}
-              />
-              <FilterBox
-                title='Sort By'
-                name='sortBy'
-                filterOptions={SELECT_ORDER_BY_ITEMS}
-                handleChange={(e) => {
-                  fetchItems(searchText, itemType, saleType, e.target.value)
-                  setSortBy(e.target.value)
-                }}
-                value={sortBy}
-              />
-            </GridItem>
-
-            <GridItem xl={9} lg={8} md={8} sm={12}>
+            <GridItem xl={12} lg={12} md={12} sm={12}>
               <Element.SearchFormWrapper>
                 <SearchForm
-                  onSelectView={(view) => {
-                    setPageSize(view === 'grid' ? 9 : 5)
-                    setPage(1)
-                    setStartIndex(0)
-                    setEndIndex(view === 'grid' ? 9 : 5)
-                    setViewMethod(view)
-                  }}
+                  onSelectView={() => {}}
                   onChangeInput={(val) => {
-                    fetchItems(val, itemType, saleType, sortBy)
+                    fetchItems(val, itemType)
                     setSearchText(val)
                   }}
-                  viewMethod={viewMethod}
+                  viewMethod={'grid'}
+                  hideViewTab={true}
                 />
               </Element.SearchFormWrapper>
 
@@ -274,7 +227,7 @@ const Profile = (props) => {
                   ) : (
                     <>
                       <Element.TabContent>
-                        <Element.TabPane active={viewMethod === 'grid'}>
+                        <Element.TabPane active={true}>
                           <GridRow>
                             {
                               slice(items, startIndex, endIndex).map((item, index) => (
@@ -284,18 +237,7 @@ const Profile = (props) => {
                               ))
                             }
                           </GridRow>
-                        </Element.TabPane>
-                        <Element.TabPane active={viewMethod === 'list'}>
-                          <GridRow>
-                            {
-                              slice(items, startIndex, endIndex).map((item, index) => (
-                                <GridItem xl={12} lg={12} md={12} sm={12} xs={12} key={`grid-${index}`}>
-                                  <NftListCard item={item} />
-                                </GridItem>
-                              ))
-                            }
-                          </GridRow>
-                        </Element.TabPane>
+                        </Element.TabPane>                   
                       </Element.TabContent>
                       <Element.PaginationBox>
                         <Pagination
