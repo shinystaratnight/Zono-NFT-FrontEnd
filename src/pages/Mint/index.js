@@ -120,9 +120,25 @@ function Mint(props) {
 									</Element.InputContainer>
 
 								</Element.InputSection>
-								<Element.InputText1>Minted: {supply} / 3,000</Element.InputText1>
-								<Element.InputText1>Mint Price: {price.toLocaleString('en', { maximumFractionDigits: 0 })} {process.env.REACT_APP_TOKEN}</Element.InputText1>
-								<Element.InputText1>Total Cost: {(price * numToken).toLocaleString('en', { maximumFractionDigits: 0 })} {process.env.REACT_APP_TOKEN}</Element.InputText1>
+								<Element.InfosBox>
+									<Element.InfoLabel>Minted:</Element.InfoLabel>
+									<Element.InfoValue>
+										{supply} / 3,000
+									</Element.InfoValue>
+								</Element.InfosBox>
+								<Element.InfosBox>
+									<Element.InfoLabel>Mint Price:</Element.InfoLabel>
+									<Element.InfoValue>
+										{price.toLocaleString('en', { maximumFractionDigits: 0 })} {process.env.REACT_APP_TOKEN}
+									</Element.InfoValue>
+								</Element.InfosBox>
+								<Element.InfosBox>
+									<Element.InfoLabel>Total Cost:</Element.InfoLabel>
+									<Element.InfoValue>
+										{(price * numToken).toLocaleString('en', { maximumFractionDigits: 0 })} {process.env.REACT_APP_TOKEN}
+									</Element.InfoValue>
+								</Element.InfosBox>
+
 								<Element.ButtonSection>
 									<CustomButton size='medium' onClick={onMintItem}>
 										{

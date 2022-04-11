@@ -168,3 +168,26 @@ export const Img = styled.img`
     height: 90vw;
   }
 `
+export const InfosBox = styled.div`
+  display: flex;
+  align-items: center;
+  width: 100%;
+  justify-content: space-between;
+  max-width: 250px;
+  margin-left: auto;
+  margin-right: auto;
+  margin-bottom: 16px;
+`
+export const InfoLabel = styled.p`
+  font-size: 18px;
+  line-height: 1.4;
+  color: #222;
+  font-weight: bold;
+  margin: 0;
+`
+export const InfoValue = styled.p`
+  font-size: 14px;
+  color: var(--colorOrange);
+  font-weight: bold;
+  margin: 0;
+`
