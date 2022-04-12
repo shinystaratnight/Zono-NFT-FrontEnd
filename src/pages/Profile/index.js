@@ -31,9 +31,7 @@ const Profile = (props) => {
   const pageSize = 9;
 
   const [userProfile, setUserProfile] = useState(undefined)
-  const { account, chainId, library } = useWeb3React();
-  const [balance, setBalance] = useState()
-  const [etherBalance, setEtherBalance] = useState()
+  const { account, chainId, library } = useWeb3React();  
 
   const [items, setItems] = useState([])
   const [page, setPage] = useState(1)  
@@ -127,30 +125,6 @@ const Profile = (props) => {
     }
   }, [user, userProfile, getUser])
 
-  useEffect(() => {
-    if (!!account && !!library) {
-      getTokenBalance(account, chainId, library.getSigner())
-        .then((balance) => {
-          setBalance(balance)
-        })
-        .catch(() => {
-          setBalance(null)
-        })
-      library.getBalance(account)
-        .then((balance) => {
-          const etherVal = parseFloat(ethers.utils.formatEther(balance));
-          setEtherBalance(etherVal.toFixed(4));
-        })
-        .catch(() => {
-          setEtherBalance(null)
-        })
-    }
-    return () => {
-      setBalance(undefined)
-      setEtherBalance(undefined)
-    }
-  }, [account, chainId, library])
-
   return (
     <Element.ProfilePageWrap>
       <Element.ProfileBanner>
@@ -170,8 +144,7 @@ const Profile = (props) => {
                       <img src={CopyIcon} alt="ProfileImage" onClick={() => copyToClipboard(id)} />
                     </Element.CopyButton>
                     <span className="email">{userProfile && userProfile.socialLink ? userProfile.socialLink : ""}</span>
-                  </Element.PinIdBox>
-                  <Element.BalanceValue>Balance : {formatNum(balance)} {process.env.REACT_APP_TOKEN} , {formatNum(etherBalance)} BNB</Element.BalanceValue>
+                  </Element.PinIdBox>                  
                 </div>
               </Element.ProfileBox>
             </Element.ProfileContentBox>

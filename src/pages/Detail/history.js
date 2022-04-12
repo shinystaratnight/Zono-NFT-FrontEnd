@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useState, useEffect } from "react";
 import * as S from './styles';
-import { formatNum } from "utils";
+import { formatNum, getCurrencyInfo } from "utils";
 
 function History(props) {
 	const { bid } = props;
@@ -45,7 +45,7 @@ function History(props) {
 				<S.PriceContainer>
 					<S.HistoryCoinImage src={"/images/logo.png"} />
 					<S.HistoryPrice>{formatNum(bid.bidPrice)}</S.HistoryPrice>
-					<S.HistoryUnit>{process.env.REACT_APP_TOKEN}</S.HistoryUnit>
+					<S.HistoryUnit>{getCurrencyInfo(bid.tokenAdr)?.symbol}</S.HistoryUnit>
 				</S.PriceContainer>
 			</S.BidAmount>
 		</S.HistoryContainer>

@@ -46,7 +46,7 @@ const LiveAuctions = () => {
               </Element.EmBar>
               <p className='sub-title'>
                 Explore the newly listed remarkable NFTs on &nbsp;
-                <span className='token-info'>{ `${process.env.REACT_APP_TOKEN} NFT Marketplace` }</span>, choose the best one, and place your bid to purchase it.
+                <span className='token-info'>Zono NFT Marketplace</span>, choose the best one, and place your bid to purchase it.
               </p>
             </Element.SectionTitleBox>
           </GridItem>

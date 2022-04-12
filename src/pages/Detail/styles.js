@@ -773,6 +773,18 @@ export const InputUnit = styled.div`
     font-weight: bold;
 		color: var(--colorOrange);
 `;
+export const CurrencySelect = styled.select`
+    width:  100px;
+    border: unset;
+    border-bottom: 1px solid rgb(234, 236, 239);
+    font-size: 18px;
+    font-weight: bold;
+    padding: 8px;
+    &:focus-visible{
+        outline: unset;
+    }
+`;
+
 
 export const SelectRow = styled.div`
     display: block;

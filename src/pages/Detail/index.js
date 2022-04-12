@@ -10,7 +10,7 @@ import DatePicker from 'react-datepicker'
 import CircularProgress from '@material-ui/core/CircularProgress';
 
 import { getTokenBalance, listItem, delistItem, buy, createAuction, finalizeAuction, bidOnAuction } from "utils/contracts";
-import { formatNum } from "utils";
+import { currencies, formatNum, getCurrencyInfo } from "utils";
 import History from "./history";
 import Provenance from "./provenance";
 import DetailActions from './DetailActions'
@@ -27,26 +27,28 @@ function Detail(props) {
 	const base_url = process.env.REACT_APP_BASE_URL;
 	console.log("BASE: ", base_url);
 	const { collection, id } = useParams();
-	const [item, setItem] = useState(null)
+	const [item, setItem] = useState(null);
 	const { account, chainId, library } = useWeb3React();
-	const [balance, setBalance] = useState(0)
-	const [snackBarMessage, setSnackBarMessage] = useState("")
-	const [openSnackbar, setOpenSnackbar] = useState(false)
+	const [balance, setBalance] = useState(0);
+	const [snackBarMessage, setSnackBarMessage] = useState("");
+	const [openSnackbar, setOpenSnackbar] = useState(false);
+	const [tokenAddr, setTokenAddr] = useState('0x0000000000000000000000000000000000000000');
 
 	useEffect(() => {
-		if (!!account && !!library) {
-			getTokenBalance(account, chainId, library.getSigner())
-				.then((balance) => {
-					setBalance(balance)
-				})
-				.catch(() => {
-					setBalance(0)
-				})
-		}
-		return () => {
-			setBalance(0)
-		}
-	}, [account, chainId, library])
+        if(account && library && tokenAddr) {
+            getTokenBalance(account, tokenAddr, library)
+            .then((balance) => {
+              setBalance(balance)
+            })
+            .catch(() => {
+              setBalance(0)
+            })          
+        }
+        return () => {
+          setBalance(0)          
+        }
+    }, [account, library, tokenAddr])
+
 
 	const [localLikeCount, setLocalLikeCount] = useState(0)
 	const [didLike, setDidLike] = useState(false)
@@ -113,7 +115,7 @@ function Detail(props) {
 	}, [item, props.user])
 
 	useEffect(() => {
-		if (item?.auction) setInterval(() => setNewTime(), 1000);
+		if (item.auction) setInterval(() => setNewTime(), 1000);
 	}, [item]);
 
 	const setNewTime = () => {
@@ -207,6 +209,7 @@ function Detail(props) {
 			item.itemCollection,
 			account,
 			item.tokenId,
+			tokenAddr,
 			putPrice,
 			chainId,
 			library.getSigner()
@@ -264,6 +267,7 @@ function Detail(props) {
 		buy(
 			account,
 			item.pair.id,
+			tokenAddr,
 			item.pair.price,
 			chainId,
 			library.getSigner()
@@ -343,6 +347,7 @@ function Detail(props) {
 			item.itemCollection,
 			account,
 			item.tokenId,
+			tokenAddr,
 			putPrice,
 			startTimeStamp,
 			endTimeStamp,
@@ -390,13 +395,13 @@ function Detail(props) {
 
 	function placeBid() {
 
-		if (!(item?.auction.bids) && (bidPrice - item.auction.price < 0)) {
+		if (!(item.auction.bids) && (bidPrice - item.auction.price < 0)) {
 			setSnackBarMessage("Your bid must be higher than minimum bid price!")
 			setOpenSnackbar(true)
 			return
 		}
 
-		if ((item?.auction.bids?.length > 0) && (bidPrice - item.auction.price * 1.05 <= 0)) {
+		if ((item.auction.bids?.length > 0) && (bidPrice - item.auction.price * 1.05 <= 0)) {
 			setSnackBarMessage("Your bid must be 5% higher than current bid!")
 			setOpenSnackbar(true)
 			return
@@ -414,6 +419,7 @@ function Detail(props) {
 		bidOnAuction(
 			account,
 			item.auction.id,
+			tokenAddr,
 			bidPrice,
 			chainId,
 			library.getSigner()
@@ -442,370 +448,389 @@ function Detail(props) {
 	return (
 		<Element.Wrapper>
 			<GridContainer>
-				<GridRow>
-					<GridItem xl={7} lg={7} md={6} sm={12}>
-						<Element.ImageContainer>
-							<Element.ImageContent>
-								<Element.NftImage src={item?.image} />
-							</Element.ImageContent>
-							<Element.AddressContainer>
-								<Element.label>Contract Address</Element.label>
-								<Element.Address>
-									<Element.NftAddress
-										href={`https://bscscan.com/address/${item?.itemCollection}`}
-										target={"_blank"}>{item?.itemCollection}</Element.NftAddress>
-									<Element.NftNetwork>BSC</Element.NftNetwork>
-								</Element.Address>
-							</Element.AddressContainer>
-							<Element.TokenIdContainer>
-								<Element.label>Token ID</Element.label>
-								<Element.TokenId>{item?.tokenId}</Element.TokenId>
-							</Element.TokenIdContainer>
-						</Element.ImageContainer>
-					</GridItem>
+				{
+					item &&				
+					<GridRow>
+						<GridItem xl={7} lg={7} md={6} sm={12}>
+							<Element.ImageContainer>
+								<Element.ImageContent>
+									<Element.NftImage src={item.image} />
+								</Element.ImageContent>
+								<Element.AddressContainer>
+									<Element.label>Contract Address</Element.label>
+									<Element.Address>
+										<Element.NftAddress
+											href={`https://bscscan.com/address/${item.itemCollection}`}
+											target={"_blank"}>{item.itemCollection}</Element.NftAddress>
+										<Element.NftNetwork>BSC</Element.NftNetwork>
+									</Element.Address>
+								</Element.AddressContainer>
+								<Element.TokenIdContainer>
+									<Element.label>Token ID</Element.label>
+									<Element.TokenId>{item.tokenId}</Element.TokenId>
+								</Element.TokenIdContainer>
+							</Element.ImageContainer>
+						</GridItem>
 
-					<GridItem xl={5} lg={5} md={6} sm={12}>
-						<Element.DetailContainer>
-							<Element.Header>
-								<Element.HeaderLeft>
-									<Element.NftTitle>{item?.name}</Element.NftTitle>
-								</Element.HeaderLeft>
-								<Element.HeaderRight>
-									<DetailActions
-										didLike={didLike}
-										clickFavorite={clickFavorite}
-										localLikeCount={localLikeCount}
-									/>
-								</Element.HeaderRight>
-							</Element.Header>
-							<Element.OwnerContainer>
-								<Element.Caption>
-									{item?.description}
-								</Element.Caption>
-								<Element.Owners>
-									<Element.UserOptionText>Owner</Element.UserOptionText>
-									<Element.Owner>
-										<Element.CreatorImage
-											src={item?.ownerUser.profilePic}
-											onClick={() => props.history.push(`/profile/${item?.ownerUser.address}`)}
+						<GridItem xl={5} lg={5} md={6} sm={12}>
+							<Element.DetailContainer>
+								<Element.Header>
+									<Element.HeaderLeft>
+										<Element.NftTitle>{item.name}</Element.NftTitle>
+									</Element.HeaderLeft>
+									<Element.HeaderRight>
+										<DetailActions
+											didLike={didLike}
+											clickFavorite={clickFavorite}
+											localLikeCount={localLikeCount}
 										/>
-										<Element.CreatorContent>
-											<Element.CreatorName>{item?.ownerUser.name}</Element.CreatorName>
-										</Element.CreatorContent>
-									</Element.Owner>
-								</Element.Owners>
-							</Element.OwnerContainer>
-							{
-								item?.auction ?
-									<Element.StatusContainer>
-										<Element.CurrentBid>
-											<Element.OptionText>Current Bid</Element.OptionText>
-											<Element.OptionContent>
-												<Element.PriceContainer>
-													<Element.CoinImage src={"/images/logo.png"} />
-													<Element.Price>{formatNum(item?.auction?.price)}</Element.Price>
-													<Element.Unit>{process.env.REACT_APP_TOKEN}</Element.Unit>
-												</Element.PriceContainer>
-											</Element.OptionContent>
-										</Element.CurrentBid>
-										<Element.BidTime>
-											<Element.OptionText>{auctionStatusMessage}</Element.OptionText>
-											<Element.Times>
-												<Element.Time>
-													<Element.TimeValue>{state.days || '00'}</Element.TimeValue>
-												</Element.Time>
-												<Element.Time>
-													<Element.TimeValue>{state.hours || '00'}</Element.TimeValue>
-												</Element.Time>
-												<Element.Time>
-													<Element.TimeValue>{state.minutes || '00'}</Element.TimeValue>
-												</Element.Time>
-												<Element.Time>
-													<Element.TimeValue>{state.seconds || '00'}</Element.TimeValue>
-												</Element.Time>
-											</Element.Times>
-										</Element.BidTime>
-									</Element.StatusContainer>
-									:
-									item?.pair ?
+									</Element.HeaderRight>
+								</Element.Header>
+								<Element.OwnerContainer>
+									<Element.Caption>
+										{item.description}
+									</Element.Caption>
+									<Element.Owners>
+										<Element.UserOptionText>Owner</Element.UserOptionText>
+										<Element.Owner>
+											<Element.CreatorImage
+												src={item.ownerUser.profilePic}
+												onClick={() => props.history.push(`/profile/${item.ownerUser.address}`)}
+											/>
+											<Element.CreatorContent>
+												<Element.CreatorName>{item.ownerUser.name}</Element.CreatorName>
+											</Element.CreatorContent>
+										</Element.Owner>
+									</Element.Owners>
+								</Element.OwnerContainer>
+								{
+									item.auction ?
 										<Element.StatusContainer>
 											<Element.CurrentBid>
-												<Element.OptionText>Price</Element.OptionText>
+												<Element.OptionText>Current Bid</Element.OptionText>
 												<Element.OptionContent>
 													<Element.PriceContainer>
 														<Element.CoinImage src={"/images/logo.png"} />
-														<Element.Price>{formatNum(item?.pair?.price)}</Element.Price>
-														<Element.Unit>{process.env.REACT_APP_TOKEN}</Element.Unit>
+														<Element.Price>{formatNum(item.auction?.price)}</Element.Price>
+														<Element.Unit>{getCurrencyInfo(item.auction.tokenAdr)?.symbol}</Element.Unit>
 													</Element.PriceContainer>
-
 												</Element.OptionContent>
 											</Element.CurrentBid>
+											<Element.BidTime>
+												<Element.OptionText>{auctionStatusMessage}</Element.OptionText>
+												<Element.Times>
+													<Element.Time>
+														<Element.TimeValue>{state.days || '00'}</Element.TimeValue>
+													</Element.Time>
+													<Element.Time>
+														<Element.TimeValue>{state.hours || '00'}</Element.TimeValue>
+													</Element.Time>
+													<Element.Time>
+														<Element.TimeValue>{state.minutes || '00'}</Element.TimeValue>
+													</Element.Time>
+													<Element.Time>
+														<Element.TimeValue>{state.seconds || '00'}</Element.TimeValue>
+													</Element.Time>
+												</Element.Times>
+											</Element.BidTime>
 										</Element.StatusContainer>
 										:
-										<Element.StatusContainer>
-											<Element.CurrentBid>
-												<Element.OptionText>Not for sale</Element.OptionText>
-											</Element.CurrentBid>
-										</Element.StatusContainer>
-							}
-							<Element.ActionContainer>
-								{
-									item && props.user ?
-										<>
-											{item.ownerUser.address.toLowerCase() === props.user.address.toLowerCase() ?
-												<>
-													<CustomButton style={{ display: item?.auction || item?.pair ? "none" : "" }} onClick={() => setShowPutMarketPlace(true)}>Put on marketplace</CustomButton>
-													<CustomButton style={{ display: item?.auction ? "" : "none" }} onClick={() => setShowEndAuction(true)}>End Auction</CustomButton>
-													<CustomButton style={{ display: item?.pair ? "" : "none" }} onClick={() => setShowUnlistMarketPlace(true)}>Unlist on marketplace</CustomButton>
-												</>
-												:
-												<>
-													<CustomButton style={{ display: item?.auction && auctionStatus ? "" : "none" }} onClick={() => setShowPlaceBidModal(true)}>Place a Bid</CustomButton>
-													<CustomButton style={{ display: item?.pair ? "" : "none" }} onClick={() => setShowBuyNowModal(true)}>Buy Now</CustomButton>
-												</>
-											}
-										</>
-										: <></>
-								}
-							</Element.ActionContainer>
+										item.pair ?
+											<Element.StatusContainer>
+												<Element.CurrentBid>
+													<Element.OptionText>Price</Element.OptionText>
+													<Element.OptionContent>
+														<Element.PriceContainer>
+															<Element.CoinImage src={"/images/logo.png"} />
+															<Element.Price>{formatNum(item.pair?.price)}</Element.Price>
+															<Element.Unit>{getCurrencyInfo(item.pair.tokenAdr)?.symbol}</Element.Unit>
+														</Element.PriceContainer>
 
-							<Element.Others>
-								<Element.TabHeader>
-									<Element.Tab style={{ display: item?.auction ? "" : "none" }} onClick={() => setCurTab('bid_history')} className={curTab === 'bid_history' ? 'active' : ''}>Bids</Element.Tab>
-									<Element.Tab onClick={() => setCurTab('provenance')} className={curTab === 'provenance' ? 'active' : ''}>Activities</Element.Tab>
-								</Element.TabHeader>
-								<Element.TabContent>
+													</Element.OptionContent>
+												</Element.CurrentBid>
+											</Element.StatusContainer>
+											:
+											<Element.StatusContainer>
+												<Element.CurrentBid>
+													<Element.OptionText>Not for sale</Element.OptionText>
+												</Element.CurrentBid>
+											</Element.StatusContainer>
+								}
+								<Element.ActionContainer>
 									{
-										curTab === 'bid_history' &&
-										<Element.TabContentContainer>
-											<Element.InfoList>
-												{
-													item?.auction.bids?.map((bid, index) => <History key={index} {...props} bid={bid} />)
+										item && props.user ?
+											<>
+												{item.ownerUser.address.toLowerCase() === props.user.address.toLowerCase() ?
+													<>
+														<CustomButton style={{ display: item.auction || item.pair ? "none" : "" }} onClick={() => setShowPutMarketPlace(true)}>Put on marketplace</CustomButton>
+														<CustomButton style={{ display: item.auction ? "" : "none" }} onClick={() => setShowEndAuction(true)}>End Auction</CustomButton>
+														<CustomButton style={{ display: item.pair ? "" : "none" }} onClick={() => setShowUnlistMarketPlace(true)}>Unlist on marketplace</CustomButton>
+													</>
+													:
+													<>
+														<CustomButton style={{ display: item.auction && auctionStatus ? "" : "none" }} onClick={() => setShowPlaceBidModal(true)}>Place a Bid</CustomButton>
+														<CustomButton style={{ display: item.pair ? "" : "none" }} onClick={() => setShowBuyNowModal(true)}>Buy Now</CustomButton>
+													</>
 												}
-											</Element.InfoList>
-										</Element.TabContentContainer>
+											</>
+											: <></>
 									}
-									{
-										curTab === 'provenance' &&
-										<Element.TabContentContainer>
-											<Element.InfoList>
-												{
-													item?.events.map((event, index) => <Provenance key={index} {...props} event={event} />)
-												}
-											</Element.InfoList>
-										</Element.TabContentContainer>
-									}
-								</Element.TabContent>
-							</Element.Others>
-						</Element.DetailContainer>
-					</GridItem>
+								</Element.ActionContainer>
 
-					<ModalBox
-						open={showPlaceBidModal}
-						handleClose={closePlaceBidModal}
-					>
-						<Element.ModalHeader>
-							<Element.ModalCloseIcon size={32} onClick={() => closePlaceBidModal()} />
-						</Element.ModalHeader>
-						<Element.ModalTitle>Your Bid</Element.ModalTitle>
-						<Element.ModalRow>
-							<Element.ModalLabel>Current bid</Element.ModalLabel>
-							<Element.ModalPrice>{formatNum(item?.auction?.price)} {process.env.REACT_APP_TOKEN}</Element.ModalPrice>
-						</Element.ModalRow>
-						<Element.BidPrice>
-							<Element.ModalLabel>Your bid</Element.ModalLabel>
-							<Element.ModalMainPrice type={"number"} value={bidPrice} onChange={event => setBidPrice(event.target.value)} />
-							<Element.UnitContainer>
-								<Element.CoinImage src={"/images/logo.png"} />
-								<Element.Unit>{process.env.REACT_APP_TOKEN}</Element.Unit>
-							</Element.UnitContainer>
-						</Element.BidPrice>
-						<Element.ModalRow>
-							<Element.ModalLabel>Available</Element.ModalLabel>
-							<Element.ModalPrice>{formatNum(balance)} {process.env.REACT_APP_TOKEN}</Element.ModalPrice>
-						</Element.ModalRow>
-						<Element.ModalAction>
-							<Element.ModalButton onClick={() => placeBid()}>
-								{
-									biddingStatus ? <CircularProgress style={{ width: "16px", height: "16px", color: "white", }} /> : "Place a Bid"
-								}
-							</Element.ModalButton>
-						</Element.ModalAction>
-					</ModalBox>
+								<Element.Others>
+									<Element.TabHeader>
+										<Element.Tab style={{ display: item.auction ? "" : "none" }} onClick={() => setCurTab('bid_history')} className={curTab === 'bid_history' ? 'active' : ''}>Bids</Element.Tab>
+										<Element.Tab onClick={() => setCurTab('provenance')} className={curTab === 'provenance' ? 'active' : ''}>Activities</Element.Tab>
+									</Element.TabHeader>
+									<Element.TabContent>
+										{
+											curTab === 'bid_history' &&
+											<Element.TabContentContainer>
+												<Element.InfoList>
+													{
+														item.auction.bids?.map((bid, index) => <History key={index} {...props} bid={bid} />)
+													}
+												</Element.InfoList>
+											</Element.TabContentContainer>
+										}
+										{
+											curTab === 'provenance' &&
+											<Element.TabContentContainer>
+												<Element.InfoList>
+													{
+														item.events.map((event, index) => <Provenance key={index} {...props} event={event} />)
+													}
+												</Element.InfoList>
+											</Element.TabContentContainer>
+										}
+									</Element.TabContent>
+								</Element.Others>
+							</Element.DetailContainer>
+						</GridItem>
 
-					<ModalBox
-						open={showBuyNowModal}
-						handleClose={() => setShowBuyNowModal(false)}
-					>
-						<Element.ModalHeader>
-							<Element.ModalCloseIcon size={32} onClick={() => setShowBuyNowModal(false)} />
-						</Element.ModalHeader>
-						<Element.ModalTitle>
-							<Element.ModalLabel>You will pay</Element.ModalLabel>
-							<Element.PayAmount>
-								<Element.CoinImage src={"/images/logo.png"} />
-								<Element.Price>{formatNum(item?.pair?.price)}</Element.Price>
-								<Element.Unit>{process.env.REACT_APP_TOKEN}</Element.Unit>
-							</Element.PayAmount>
-
-						</Element.ModalTitle>
-						<Element.ModalRow>
-							<Element.ModalLabel>Available</Element.ModalLabel>
-							<Element.ModalPrice>{formatNum(balance)} {process.env.REACT_APP_TOKEN}</Element.ModalPrice>
-						</Element.ModalRow>
-						<Element.ModalActions>
-							<Element.ModalCancelButton onClick={() => setShowBuyNowModal(false)}>Cancel</Element.ModalCancelButton>
-							<Element.ModalSubmitButton onClick={() => buyItem()}>
-								{
-									buyingStatus ? <CircularProgress style={{ width: "16px", height: "16px", color: "white", }} /> : "Confirm"
-								}
-							</Element.ModalSubmitButton>
-						</Element.ModalActions>
-					</ModalBox>
-
-					<ModalBox
-						open={showPutMarketPlace}
-						handleClose={() => setShowPutMarketPlace(false)}
-					>
-						<Element.ModalHeader>
-							<Element.ModalCloseIcon size={32} onClick={() => setShowPutMarketPlace(false)} />
-						</Element.ModalHeader>
-						<Element.ModalTitle>Put on Marketplace</Element.ModalTitle>
-						<Element.PutTypes>
-							<Element.PutType onClick={() => setPutType('fixed')} className={putType === 'fixed' ? 'active' : ''}>
-								<Element.FixedIcon size={32} />
-								<Element.TypeLabel>Fixed price</Element.TypeLabel>
-							</Element.PutType>
-							<Element.PutType onClick={() => setPutType('timed')} className={putType === 'timed' ? 'active' : ''}>
-								<Element.TimeIcon size={36} />
-								<Element.TypeLabel>Timed auction</Element.TypeLabel>
-							</Element.PutType>
-						</Element.PutTypes>
 						{
-							putType === 'fixed' &&
-							<Element.Field>
-								<Element.label>Price</Element.label>
-								<Element.InputContainer>
-									<Element.Input type={"number"} placeholder={"Enter Price"} value={putPrice} onChange={event => setPutPrice(event.target.value)} />
-									<Element.InputUnit>{process.env.REACT_APP_TOKEN}</Element.InputUnit>
-								</Element.InputContainer>
-							</Element.Field>
+							item && item.auction &&										
+							<ModalBox
+								open={showPlaceBidModal}
+								handleClose={closePlaceBidModal}
+							>
+								<Element.ModalHeader>
+									<Element.ModalCloseIcon size={32} onClick={() => closePlaceBidModal()} />
+								</Element.ModalHeader>
+								<Element.ModalTitle>Your Bid</Element.ModalTitle>
+								<Element.ModalRow>
+									<Element.ModalLabel>Current bid</Element.ModalLabel>
+									<Element.ModalPrice>{formatNum(item.auction.price)} {getCurrencyInfo(item.auction.tokenAdr)?.symbol}</Element.ModalPrice>
+								</Element.ModalRow>
+								<Element.BidPrice>
+									<Element.ModalLabel>Your bid</Element.ModalLabel>
+									<Element.ModalMainPrice type={"number"} value={bidPrice} onChange={event => setBidPrice(event.target.value)} />
+									<Element.UnitContainer>
+										<Element.CoinImage src={"/images/logo.png"} />
+										<Element.Unit>{getCurrencyInfo(item.auction.tokenAdr)?.symbol}</Element.Unit>
+									</Element.UnitContainer>
+								</Element.BidPrice>
+								<Element.ModalRow>
+									<Element.ModalLabel>Available</Element.ModalLabel>
+									<Element.ModalPrice>{formatNum(balance)} {getCurrencyInfo(item.auction.tokenAdr)?.symbol}</Element.ModalPrice>
+								</Element.ModalRow>
+								<Element.ModalAction>
+									<Element.ModalButton onClick={() => placeBid()}>
+										{
+											biddingStatus ? <CircularProgress style={{ width: "16px", height: "16px", color: "white", }} /> : "Place a Bid"
+										}
+									</Element.ModalButton>
+								</Element.ModalAction>
+							</ModalBox>
 						}
 						{
-							putType === 'timed' &&
-							<>
+							item && item.pair &&						
+							<ModalBox
+								open={showBuyNowModal}
+								handleClose={() => setShowBuyNowModal(false)}
+							>
+								<Element.ModalHeader>
+									<Element.ModalCloseIcon size={32} onClick={() => setShowBuyNowModal(false)} />
+								</Element.ModalHeader>
+								<Element.ModalTitle>
+									<Element.ModalLabel>You will pay</Element.ModalLabel>
+									<Element.PayAmount>
+										<Element.CoinImage src={"/images/logo.png"} />
+										<Element.Price>{formatNum(item.pair?.price)}</Element.Price>
+										<Element.Unit>{getCurrencyInfo(item.pair.tokenAdr)?.symbol}</Element.Unit>
+									</Element.PayAmount>
+
+								</Element.ModalTitle>
+								<Element.ModalRow>
+									<Element.ModalLabel>Available</Element.ModalLabel>
+									<Element.ModalPrice>{formatNum(balance)} {getCurrencyInfo(item.pair.tokenAdr)?.symbol}</Element.ModalPrice>
+								</Element.ModalRow>
+								<Element.ModalActions>
+									<Element.ModalCancelButton onClick={() => setShowBuyNowModal(false)}>Cancel</Element.ModalCancelButton>
+									<Element.ModalSubmitButton onClick={() => buyItem()}>
+										{
+											buyingStatus ? <CircularProgress style={{ width: "16px", height: "16px", color: "white", }} /> : "Confirm"
+										}
+									</Element.ModalSubmitButton>
+								</Element.ModalActions>
+							</ModalBox>
+						}
+						<ModalBox
+							open={showPutMarketPlace}
+							handleClose={() => setShowPutMarketPlace(false)}
+						>
+							<Element.ModalHeader>
+								<Element.ModalCloseIcon size={32} onClick={() => setShowPutMarketPlace(false)} />
+							</Element.ModalHeader>
+							<Element.ModalTitle>Put on Marketplace</Element.ModalTitle>
+							<Element.PutTypes>
+								<Element.PutType onClick={() => setPutType('fixed')} className={putType === 'fixed' ? 'active' : ''}>
+									<Element.FixedIcon size={32} />
+									<Element.TypeLabel>Fixed price</Element.TypeLabel>
+								</Element.PutType>
+								<Element.PutType onClick={() => setPutType('timed')} className={putType === 'timed' ? 'active' : ''}>
+									<Element.TimeIcon size={36} />
+									<Element.TypeLabel>Timed auction</Element.TypeLabel>
+								</Element.PutType>
+							</Element.PutTypes>
+							{
+								putType === 'fixed' &&
 								<Element.Field>
-									<Element.label>Minimum bid</Element.label>
+									<Element.label>Price</Element.label>
 									<Element.InputContainer>
-										<Element.Input type={"number"} placeholder={"Enter minimum bid"} value={putPrice} onChange={event => setPutPrice(event.target.value)} />
-										<Element.InputUnit>{process.env.REACT_APP_TOKEN}</Element.InputUnit>
+										<Element.Input type={"number"} placeholder={"Enter Price"} value={putPrice} onChange={event => setPutPrice(event.target.value)} />
+										<Element.CurrencySelect name={"currencies"} defaultValue={tokenAddr} onChange={event => setTokenAddr(event.target.value)}>
+										{
+											currencies.map((currencyItem, index) =>  
+												<Element.OrderByOption  key={index} value={currencyItem.address}>{currencyItem.symbol}</Element.OrderByOption>
+											)
+										}
+										</Element.CurrencySelect> 
 									</Element.InputContainer>
-
 								</Element.Field>
-								<Element.SelectRow>
-									<Element.SelectField>
-										<Element.label>Starting Date</Element.label>
-										<Element.StartingDateSelect name={"starting_date"} defaultValue={startType} onChange={event => setStartType(event.target.value)}>
-											<Element.OrderByOption value={"now"}>Right after listing</Element.OrderByOption>
-											<Element.OrderByOption value={"specific"}>Pick specific date</Element.OrderByOption>
-										</Element.StartingDateSelect>
-										{
-											startType === "specific" &&
-											<DatePicker
-												selected={startDate}
-												onChange={value => setStartDate(value)}
-												className={"input-picker"}
-												showTimeSelect
-												dateFormat="Pp"
-											/>
-										}
-									</Element.SelectField>
-									<Element.SelectField>
-										<Element.label>Expiration Date</Element.label>
-										<Element.StartingDateSelect name={"expiration_date"} defaultValue={endType} onChange={event => setEndType(event.target.value)}>
-											<Element.OrderByOption value={"1"}>1 day</Element.OrderByOption>
-											<Element.OrderByOption value={"3"}>3 days</Element.OrderByOption>
-											<Element.OrderByOption value={"5"}>5 days</Element.OrderByOption>
-											<Element.OrderByOption value={"7"}>7 days</Element.OrderByOption>
-											<Element.OrderByOption value={"specific"}>Pick specific date</Element.OrderByOption>
-										</Element.StartingDateSelect>
-										{
-											endType === "specific" &&
-											<DatePicker
-												selected={endDate}
-												onChange={value => setEndDate(value)}
-												className={"input-picker"}
-												showTimeSelect
-												dateFormat="Pp"
-											/>
-										}
-									</Element.SelectField>
-								</Element.SelectRow>
-							</>
-						}
+							}
+							{
+								putType === 'timed' &&
+								<>
+									<Element.Field>
+										<Element.label>Minimum bid</Element.label>
+										<Element.InputContainer>
+											<Element.Input type={"number"} placeholder={"Enter minimum bid"} value={putPrice} onChange={event => setPutPrice(event.target.value)} />
+											<Element.CurrencySelect name={"currencies"} defaultValue={tokenAddr.address} onChange={event => setTokenAddr(event.target.value)}>
+											{
+												currencies.map((currencyItem, index) =>  
+													<Element.OrderByOption  key={index} value={currencyItem.address}>{currencyItem?.symbol}</Element.OrderByOption>
+												)
+											}
+											</Element.CurrencySelect>
+										</Element.InputContainer>
 
-						<Element.ModalActions>
-							<Element.ModalCancelButton onClick={() => setShowPutMarketPlace(false)}>Cancel</Element.ModalCancelButton>
-							<Element.ModalSubmitButton onClick={() => putOnMarketPlace()}>
-								{
-									listingStatus || creatingAuctionStatus ? <CircularProgress style={{ width: "16px", height: "16px", color: "white", }} /> : "Confirm"
-								}
-							</Element.ModalSubmitButton>
-						</Element.ModalActions>
-					</ModalBox>
+									</Element.Field>
+									<Element.SelectRow>
+										<Element.SelectField>
+											<Element.label>Starting Date</Element.label>
+											<Element.StartingDateSelect name={"starting_date"} defaultValue={startType} onChange={event => setStartType(event.target.value)}>
+												<Element.OrderByOption value={"now"}>Right after listing</Element.OrderByOption>
+												<Element.OrderByOption value={"specific"}>Pick specific date</Element.OrderByOption>
+											</Element.StartingDateSelect>
+											{
+												startType === "specific" &&
+												<DatePicker
+													selected={startDate}
+													onChange={value => setStartDate(value)}
+													className={"input-picker"}
+													showTimeSelect
+													dateFormat="Pp"
+												/>
+											}
+										</Element.SelectField>
+										<Element.SelectField>
+											<Element.label>Expiration Date</Element.label>
+											<Element.StartingDateSelect name={"expiration_date"} defaultValue={endType} onChange={event => setEndType(event.target.value)}>
+												<Element.OrderByOption value={"1"}>1 day</Element.OrderByOption>
+												<Element.OrderByOption value={"3"}>3 days</Element.OrderByOption>
+												<Element.OrderByOption value={"5"}>5 days</Element.OrderByOption>
+												<Element.OrderByOption value={"7"}>7 days</Element.OrderByOption>
+												<Element.OrderByOption value={"specific"}>Pick specific date</Element.OrderByOption>
+											</Element.StartingDateSelect>
+											{
+												endType === "specific" &&
+												<DatePicker
+													selected={endDate}
+													onChange={value => setEndDate(value)}
+													className={"input-picker"}
+													showTimeSelect
+													dateFormat="Pp"
+												/>
+											}
+										</Element.SelectField>
+									</Element.SelectRow>
+								</>
+							}
 
-					<ModalBox
-						open={showEndAuction}
-						handleClose={() => setShowEndAuction(false)}
-					>
-						<Element.ModalHeader>
-							<Element.ModalCloseIcon size={32} onClick={() => setShowEndAuction(false)} />
-						</Element.ModalHeader>
-						<Element.ModalTitle>
-							End Auction
-							<Element.PayAmount>
-								<Element.Price>Are you sure you want to end this auction ?</Element.Price>
-							</Element.PayAmount>
-						</Element.ModalTitle>
-						<Element.ModalActions>
-							<Element.ModalCancelButton onClick={() => setShowEndAuction(false)}>Cancel</Element.ModalCancelButton>
-							<Element.ModalSubmitButton onClick={() => endAuction()}>
-								{
-									endingAuctionStatus ? <CircularProgress style={{ width: "16px", height: "16px", color: "white", }} /> : "End Auction"
-								}
-							</Element.ModalSubmitButton>
-						</Element.ModalActions>
-					</ModalBox>
+							<Element.ModalActions>
+								<Element.ModalCancelButton onClick={() => setShowPutMarketPlace(false)}>Cancel</Element.ModalCancelButton>
+								<Element.ModalSubmitButton onClick={() => putOnMarketPlace()}>
+									{
+										listingStatus || creatingAuctionStatus ? <CircularProgress style={{ width: "16px", height: "16px", color: "white", }} /> : "Confirm"
+									}
+								</Element.ModalSubmitButton>
+							</Element.ModalActions>
+						</ModalBox>
 
-					<ModalBox
-						open={showUnlistMarketPlace}
-						handleClose={() => setShowUnlistMarketPlace(false)}
-					>
-						<Element.ModalHeader>
-							<Element.ModalCloseIcon size={32} onClick={() => setShowUnlistMarketPlace(false)} />
-						</Element.ModalHeader>
-						<Element.ModalTitle>
-							Unlist Item
-							<Element.PayAmount>
-								<Element.Price>Are you sure you want to unlist this auction ?</Element.Price>
-							</Element.PayAmount>
-						</Element.ModalTitle>
-						<Element.ModalActions>
-							<Element.ModalCancelButton onClick={() => setShowUnlistMarketPlace(false)}>Cancel</Element.ModalCancelButton>
-							<Element.ModalSubmitButton onClick={() => unlistItem()}>
-								{
-									delistingStatus ? <CircularProgress style={{ width: "16px", height: "16px", color: "white", }} /> : "Unlist"
-								}
-							</Element.ModalSubmitButton>
-						</Element.ModalActions>
-					</ModalBox>				
+						<ModalBox
+							open={showEndAuction}
+							handleClose={() => setShowEndAuction(false)}
+						>
+							<Element.ModalHeader>
+								<Element.ModalCloseIcon size={32} onClick={() => setShowEndAuction(false)} />
+							</Element.ModalHeader>
+							<Element.ModalTitle>
+								End Auction
+								<Element.PayAmount>
+									<Element.Price>Are you sure you want to end this auction ?</Element.Price>
+								</Element.PayAmount>
+							</Element.ModalTitle>
+							<Element.ModalActions>
+								<Element.ModalCancelButton onClick={() => setShowEndAuction(false)}>Cancel</Element.ModalCancelButton>
+								<Element.ModalSubmitButton onClick={() => endAuction()}>
+									{
+										endingAuctionStatus ? <CircularProgress style={{ width: "16px", height: "16px", color: "white", }} /> : "End Auction"
+									}
+								</Element.ModalSubmitButton>
+							</Element.ModalActions>
+						</ModalBox>
 
-					<CustomSnackbar
-						open={openSnackbar}
-						handleClose={handleCloseDialog}
-						message={snackBarMessage}
-					/>
-				</GridRow>
+						<ModalBox
+							open={showUnlistMarketPlace}
+							handleClose={() => setShowUnlistMarketPlace(false)}
+						>
+							<Element.ModalHeader>
+								<Element.ModalCloseIcon size={32} onClick={() => setShowUnlistMarketPlace(false)} />
+							</Element.ModalHeader>
+							<Element.ModalTitle>
+								Unlist Item
+								<Element.PayAmount>
+									<Element.Price>Are you sure you want to unlist this auction ?</Element.Price>
+								</Element.PayAmount>
+							</Element.ModalTitle>
+							<Element.ModalActions>
+								<Element.ModalCancelButton onClick={() => setShowUnlistMarketPlace(false)}>Cancel</Element.ModalCancelButton>
+								<Element.ModalSubmitButton onClick={() => unlistItem()}>
+									{
+										delistingStatus ? <CircularProgress style={{ width: "16px", height: "16px", color: "white", }} /> : "Unlist"
+									}
+								</Element.ModalSubmitButton>
+							</Element.ModalActions>
+						</ModalBox>				
+
+						<CustomSnackbar
+							open={openSnackbar}
+							handleClose={handleCloseDialog}
+							message={snackBarMessage}
+						/>
+					</GridRow>
+				}
 			</GridContainer>
 		</Element.Wrapper>
 	);

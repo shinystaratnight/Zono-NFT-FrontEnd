@@ -21,7 +21,7 @@ import {
   LikeCount
 } from './styles'
 
-import { formatNum } from "utils";
+import { formatNum, getCurrencyInfo } from "utils";
 
 const NftGridCard = (props) => {
 
@@ -131,18 +131,20 @@ const NftGridCard = (props) => {
           </Title>
         </Link>
         {
-          (item.auction || item.pair) && (
-            <Price>
-              {item.auction ? formatNum(item.auction?.price) : formatNum(item.pair?.price)}
-              <PriceToken>{process.env.REACT_APP_TOKEN}</PriceToken>
-            </Price>
-          )
+          item.auction && 
+          <Price>
+            {formatNum(item.auction.price)}
+            <PriceToken>{getCurrencyInfo(item.auction.tokenAdr)?.symbol}</PriceToken>
+          </Price>          
         }
-        <BidLink to={`/detail/${item.itemCollection}/${item.tokenId}`}>
-          {
-            buttonText ? buttonText : item.auction ? 'Place A Bid' : 'Buy Now'
-          }
-        </BidLink>
+        {
+          item.pair && 
+          <Price>
+            {formatNum(item.pair.price)}
+            <PriceToken>{getCurrencyInfo(item.pair.tokenAdr)?.symbol}</PriceToken>
+          </Price>
+          
+        }        
       </NftInfo>
     </NftCard>
   )

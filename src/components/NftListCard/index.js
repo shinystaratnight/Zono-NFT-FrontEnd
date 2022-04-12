@@ -3,7 +3,6 @@ import { Link } from 'react-router-dom'
 
 import {
   NftCard,
-  StoreLabel,
   CardContent,
   CardMedia,
   CardImage,
@@ -22,7 +21,7 @@ import {
   AuctionStatus
 } from './styles'
 
-import { formatNum } from "utils";
+import { formatNum, getCurrencyInfo } from "utils";
 
 const NftListCard = (props) => {
 
@@ -92,9 +91,6 @@ const NftListCard = (props) => {
 
   return (
     <NftCard>
-      <StoreLabel>
-        {process.env.REACT_APP_TOKEN}
-      </StoreLabel>
       <CardContent>
         <CardMedia>
           <Link to={`/detail/${item.itemCollection}/${item.tokenId}`}>
@@ -140,16 +136,23 @@ const NftListCard = (props) => {
               )
             }
             {
-              (item.auction || item.pair) && (
-                <PriceSection>
-                  <PriceLabel>
-                    {`${item.auction ? 'Current Bid' : 'Price'}:`}
-                  </PriceLabel>
-                  <PriceVale>
-                    {`${item.auction ? formatNum(item.auction?.price) : formatNum(item.pair?.price)} ${process.env.REACT_APP_TOKEN}`}
-                  </PriceVale>
-                </PriceSection>
-              )
+              item.auction && 
+              <PriceSection>
+                <PriceLabel> Current Bid: </PriceLabel>
+                <PriceVale>
+                  {`${formatNum(item.auction.price)} ${getCurrencyInfo(item.auction.tokenAdr)?.symbol}`}
+                </PriceVale>
+              </PriceSection>
+              
+            }
+            {
+              item.pair && 
+              <PriceSection>
+                <PriceLabel> Price: </PriceLabel>
+                <PriceVale>
+                  {`${formatNum(item.pair.price)} ${getCurrencyInfo(item.pair.tokenAdr)?.symbol}`}
+                </PriceVale>
+              </PriceSection>              
             }
           </TimerSection>
           <div>

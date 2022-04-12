@@ -1,5 +1,13 @@
+/* eslint-disable no-redeclare */
 import { BigNumber, ethers } from "ethers";
-import { getCollectionContract, getContractInfo, getContractObj } from ".";
+import { getCollectionContract, 
+    getContractInfo, 
+    getContractObj, 
+    getMintInfo, 
+    getMintObj, 
+    getCurrencyInfoFromSymbol,
+    getTokenContract 
+} from ".";
 
 export function isAddress(address) {
     try {
@@ -19,71 +27,38 @@ export function toWei(amount) {
 /**
  * Governance Token Contract Management
  */
-export async function getTokenBalance(account, chainId, provider) {
-    const Token = getContractObj('Token', chainId, provider);
-    if(Token) {
-        const balance = await Token.balanceOf(account);
-        return parseFloat(toEth(balance));
-    }
-    return 0;
-}
-export async function getMintPrice(account, chainId, provider) {
-    const mintContract = getContractObj('NFTMint', chainId, provider);
-    if(mintContract) {
-        const cost = await mintContract.COST();
-        return parseFloat(toEth(cost));
-    }
-    return 0;
-}
-
-export async function getMintSupply(account, chainId, provider) {
-    const mintContract = getContractObj('NFTMint', chainId, provider);
-    if(mintContract) {
-        const totalSupply = await mintContract.totalSupply();
-        return Number(totalSupply);
-    }
+export async function getTokenBalance(account, tokenAddr, library) {
+    if (tokenAddr === '0x0000000000000000000000000000000000000000') {
+        // get BNB balance
+        var balance = await library.getBalance(account);
+        var etherVal = parseFloat(ethers.utils.formatEther(balance));  
+        return etherVal;
+    } else {
+        // get token balance
+        var Token = getTokenContract(tokenAddr, library.getSigner());
+        if(Token) {
+            var balance = await Token.balanceOf(account);
+            var decimal = await Token.decimals();
+            return parseFloat(ethers.utils.formatUnits(String(balance),decimal));
+        }
+    }    
     return 0;
 }
 
-export async function isTokenApprovedForMint(account, amount, chainId, provider) {
-    const mintContract = getContractObj('NFTMint', chainId, provider);
-    const tokenContract = getContractObj('Token', chainId, provider);
-
-    const allowance = await tokenContract.allowance(account, mintContract.address);
-    if(BigNumber.from(toWei(amount)).gt(allowance)) {
-        return false;
-    }
-    return true;
-}
-export async function isTokenApprovedForMarket(account, amount, chainId, provider) {
-    const marketContract = getContractObj('Market', chainId, provider);
-    const tokenContract = getContractObj('Token', chainId, provider);
-
-    const allowance = await tokenContract.allowance(account, marketContract.address);
-    if(BigNumber.from(toWei(amount)).gt(allowance)) {
-        return false;
-    }
-    return true;
-}
-export async function isTokenApprovedForAuction(account, amount, chainId, provider) {
-    const auctionContract = getContractObj('Auction', chainId, provider);
-    const tokenContract = getContractObj('Token', chainId, provider);
-
-    const allowance = await tokenContract.allowance(account, auctionContract.address);
+export async function isTokenApproved(account, amount, tokenAddr, toAddress, provider) {
+    const tokenContract = getTokenContract(tokenAddr, provider);    
+    const allowance = await tokenContract.allowance(account, toAddress);
     if(BigNumber.from(toWei(amount)).gt(allowance)) {
         return false;
     }
     return true;
 }
 
-
-export async function approveTokenForMint(chainId, signer) {
-    const mintContract = getContractObj('NFTMint', chainId, signer);
-    const tokenContract = getContractObj('Token', chainId, signer);
-
+export async function approveToken(tokenAddr, toAddress, provider) {
+    const tokenContract = getTokenContract(tokenAddr, provider); 
     const approveAmount = '0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF';
     try {
-        const approve_tx = await tokenContract.approve(mintContract.address, approveAmount);
+        const approve_tx = await tokenContract.approve(toAddress, approveAmount);
         await approve_tx.wait(1);
         return true;
     }catch(e) {
@@ -91,35 +66,6 @@ export async function approveTokenForMint(chainId, signer) {
         return false;
     }
 }
-export async function approveTokenForMarket(chainId, signer) {
-    const marketContract = getContractObj('Market', chainId, signer);
-    const tokenContract = getContractObj('Token', chainId, signer);
-
-    const approveAmount = '0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF';
-    try {
-        const approve_tx = await tokenContract.approve(marketContract.address, approveAmount);
-        await approve_tx.wait(1);
-        return true;
-    }catch(e) {
-        console.log(e)
-        return false;
-    }
-}
-export async function approveTokenForAuction(chainId, signer) {
-    const auctionContract = getContractObj('Auction', chainId, signer);
-    const tokenContract = getContractObj('Token', chainId, signer);
-
-    const approveAmount = '0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF';
-    try {
-        const approve_tx = await tokenContract.approve(auctionContract.address, approveAmount);
-        await approve_tx.wait(1);
-        return true;
-    }catch(e) {
-        console.log(e)
-        return false;
-    }
-}
-
 
 
 
@@ -164,7 +110,6 @@ export async function setNFTApprovalForAuction(collection, approved, chainId, pr
     return false;
 }
 
-
 /**
  * Create Item
  */
@@ -183,45 +128,22 @@ export async function createItem(collection, uri, chainId, provider) {
     }        
 }
 
-/**
- * Mint NFT
- */
- export async function mint(account, price, amount,chainId, provider) {
-    const mintContract = getContractObj('NFTMint', chainId, provider);
-    const mintContractInfo = getContractInfo('NFTMint', chainId); 
-    const Token = getContractObj('Token', chainId, provider); 
-    if (!mintContract || !mintContractInfo || !Token) return false
-    try {
-        let isTokenApproved = await isTokenApprovedForMint(account, price * amount, chainId, provider)
-        if (!isTokenApproved) {
-            isTokenApproved = await approveTokenForMint(chainId, provider)
-        }
-        if (isTokenApproved) {
-            const tx = await mintContract.mint(amount)
-            const receipt = await tx.wait(2);
-            if(receipt.confirmations) {
-                return true
-            }
-        }        
-        return false;
-    }catch(e) {
-        console.log(e)
-        return false;
-    }        
-}
 
-export async function listItem(collection, owner, token_id, price, chainId, provider) {
+
+/**
+ * Fixed Price Sale Management
+ */
+export async function listItem(collection, owner, token_id, tokenAddr, price, chainId, provider) {
     const marketContract = getContractObj('Market', chainId, provider);
-    const marketContractInfo = getContractInfo('Market', chainId);
-    const tokenContractInfo = getContractInfo('Token', chainId);
-    if (!marketContract || !marketContractInfo || !tokenContractInfo) return false
+    const marketContractInfo = getContractInfo('Market', chainId);    
+    if (!marketContract || !marketContractInfo) return false
     try {
         let isApproved = await isNFTApprovedForMarket(collection, owner, chainId, provider);
         if(!isApproved) {
             isApproved = await setNFTApprovalForMarket(collection, true, chainId, provider);            
         }
         if (isApproved) {
-            const tx =  await marketContract.list(collection, token_id, tokenContractInfo.address, ethers.utils.parseEther(price));
+            const tx =  await marketContract.list(collection, token_id, tokenAddr, ethers.utils.parseEther(price));
             const receipt = await tx.wait(2);
             if(receipt.confirmations) {
                 return true
@@ -247,21 +169,29 @@ export async function delistItem(id, chainId, provider) {
     }
 }
   
-export async function buy(account, id, price, chainId, provider) {
-    const marketContract = getContractObj('Market', chainId, provider)
-    const Token = getContractObj('Token', chainId, provider)
-    if (!marketContract || !Token) return false    
+export async function buy(account, id, tokenAddr, price, chainId, provider) {
+    const marketContract = getContractObj('Market', chainId, provider);
+    const marketContractInfo = getContractInfo('Market', chainId);
+    if (!marketContract || !marketContractInfo) return false    
     try {
-        let isTokenApproved = await isTokenApprovedForMarket(account, price, chainId, provider)
-        if (!isTokenApproved) {
-            isTokenApproved = await approveTokenForMarket(chainId, provider)
-        }
-        if (isTokenApproved) {
-            const tx = await marketContract.buy(id)
+        if (tokenAddr === '0x0000000000000000000000000000000000000000') {
+            const tx = await marketContract.buy(id, {
+                value: toWei(price)
+            })
             await tx.wait(2)
             return true
-        }
-        return false          
+        } else {
+            let approved = await isTokenApproved(account, price, tokenAddr, marketContractInfo.address, provider)
+            if (!approved) {
+                approved = await approveToken(tokenAddr, marketContractInfo.address, provider)
+            }
+            if (approved) {
+                const tx = await marketContract.buy(id)
+                await tx.wait(2)
+                return true
+            }
+            return false  
+        }               
     } catch (e) {
       console.log(e)
       return false
@@ -271,23 +201,20 @@ export async function buy(account, id, price, chainId, provider) {
 
 
 
-
-
 /**
  * Auction Contract Management
  */
-export async function createAuction(collection, owner, token_id, startPrice, startTime, endTime, chainId, provider) {
+export async function createAuction(collection, owner, token_id, tokenAddr, startPrice, startTime, endTime, chainId, provider) {
     const auctionContract = getContractObj('Auction', chainId, provider);
-    const auctionContractInfo = getContractInfo('Auction', chainId);
-    const tokenContractInfo = getContractInfo('Token', chainId);    
-    if (!auctionContract || !auctionContractInfo || !tokenContractInfo) return false
+    const auctionContractInfo = getContractInfo('Auction', chainId);        
+    if (!auctionContract || !auctionContractInfo) return false
     try {
         let isApproved = await isNFTApprovedForAuction(collection, owner, chainId, provider);
         if(!isApproved) {
             isApproved = await setNFTApprovalForAuction(collection, true, chainId, provider);            
         }
         if (isApproved) {
-            const tx =  await auctionContract.createAuction(collection, token_id, tokenContractInfo.address, ethers.utils.parseEther(startPrice),startTime,endTime);
+            const tx =  await auctionContract.createAuction(collection, token_id, tokenAddr, ethers.utils.parseEther(startPrice),startTime,endTime);
             const receipt = await tx.wait(2);
             if(receipt.confirmations) {
                 return true
@@ -313,23 +240,115 @@ export async function finalizeAuction(id, chainId, provider) {
     }
 }
   
-export async function bidOnAuction(account, id, price, chainId, provider) {
-    const auctionContract = getContractObj('Auction', chainId, provider)
-    const Token = getContractObj('Token', chainId, provider)
-    if (!auctionContract || !Token) return false    
+export async function bidOnAuction(account, id, tokenAddr, price, chainId, provider) {
+    const auctionContract = getContractObj('Auction', chainId, provider);
+    const auctionContractInfo = getContractInfo('Auction', chainId);
+    if (!auctionContract) return false  
     try {
-        let isTokenApproved = await isTokenApprovedForAuction(account, price, chainId, provider)
-        if (!isTokenApproved) {
-            isTokenApproved = await approveTokenForAuction(chainId, provider)
-        }
-        if (isTokenApproved) {
-            const tx = await auctionContract.bidOnAuction(id, ethers.utils.parseEther(price))
+        if (tokenAddr === '0x0000000000000000000000000000000000000000') {
+            const tx = await auctionContract.bidOnAuction(id, ethers.utils.parseEther(price), {
+                value: ethers.utils.parseEther(price)
+            })
             await tx.wait(2)
             return true
-        }
-        return false          
+        } else {
+            let approved = await isTokenApproved(account, price, tokenAddr, auctionContractInfo.address, provider)
+            if (!approved) {
+                approved = await approveToken(tokenAddr, auctionContractInfo.address, provider)
+            }
+            if (approved) {
+                const tx = await auctionContract.bidOnAuction(id, ethers.utils.parseEther(price))
+                await tx.wait(2)
+                return true
+            }
+            return false 
+        }                  
     } catch (e) {
       console.log(e)
       return false
     }
+}
+
+
+
+
+
+/**
+ * NFT MintWithToken1 Management
+ */
+export async function getMintWithToken1Price(provider) {
+    const mintContract = getMintObj('MintWithToken1', provider);
+    if(mintContract) {
+        const cost = await mintContract.COST();        
+        return parseFloat(toEth(cost));
+    }
+    return 0;
+}
+export async function getMintWithToken1Supply(provider) {
+    const mintContract = getMintObj('MintWithToken1', provider);
+    if(mintContract) {
+        const totalSupply = await mintContract.totalSupply();
+        return Number(totalSupply);
+    }
+    return 0;
+}
+export async function mintWithToken1(account, price, amount, provider) {
+    const mintContract = getMintObj('MintWithToken1', provider);
+    const mintContractInfo = getMintInfo('MintWithToken1'); 
+    const currencyInfo = getCurrencyInfoFromSymbol('zono');    
+    if (!mintContract || !mintContractInfo || !currencyInfo) return false
+    try {
+        let approved = await isTokenApproved(account, price * amount, currencyInfo.address, mintContractInfo.address, provider)
+        if (!approved) {
+            approved = await approveToken(currencyInfo.address, mintContractInfo.address, provider)
+        }
+        if (approved) {
+            const tx = await mintContract.mint(amount)
+            const receipt = await tx.wait(2);
+            if(receipt.confirmations) {
+                return true
+            }
+        }        
+        return false;
+    }catch(e) {
+        console.log(e)
+        return false;
+    }        
+}
+
+
+
+
+/**
+ * NFT MintWithCoin1 Management
+ */
+export async function getMintWithCoin1Price(provider) {
+    const mintContract = getMintObj('MintWithCoin1', provider);
+    if(mintContract) {
+        const cost = await mintContract._nftPrice();        
+        return parseFloat(toEth(cost));
+    }
+    return 0;
+}
+export async function getMintWithCoin1Supply(provider) {
+    const mintContract = getMintObj('MintWithCoin1', provider);
+    if(mintContract) {
+        const totalSupply = await mintContract.totalSupply();
+        return Number(totalSupply);
+    }
+    return 0;
+}
+export async function mintWithCoin1(account, price, amount, provider) {
+    const mintContract = getMintObj('MintWithCoin1', provider);        
+    if (!mintContract) return false
+    try {
+        const tx = await mintContract.mint(amount, {
+            value: toWei(price)
+        })
+        await tx.wait(2)
+        return true
+    }catch(e) {
+        console.log(e)
+        return false;
+    }        
 }

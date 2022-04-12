@@ -4,7 +4,7 @@ import React , {useState,useEffect} from "react";
 
 import TimerClock from '../../assets/images/timerClock.png';
 import BidImageIcon from '../../assets/images/doggyface.png';
-import { formatNum } from "../../utils";
+import { formatNum, getCurrencyInfo } from "../../utils";
 
 function Nft(props) {
     const {item} = props;
@@ -90,21 +90,32 @@ function Nft(props) {
                     </div>
                     <div className="info-box">
                         <div className="titleTag-box">
-                            <h2>{item.name}</h2>
-                            <span className="tag">{process.env.REACT_APP_TOKEN}</span>
+                            <h2>{item.name}</h2>                            
                         </div>
                         {
-                            (item.auction || item.pair) && 
+                            item.auction && 
                             <div className="price-box">
-                                <span className="bid">{item.auction ? 'Current Bid' : 'Price'}</span>
+                                <span className="bid">Current Bid</span>
                                 <div className="price-wrap">
                                     <img src={BidImageIcon} alt="BidImageIcon" />
                                     <span className="price">
-                                        <span>{item.auction ? formatNum(item.auction?.price) : formatNum(item.pair?.price)} {process.env.REACT_APP_TOKEN}</span>                                        
+                                        <span>{formatNum(item.auction.price)} {getCurrencyInfo(item.auction.tokenAdr)?.symbol}</span>                                        
                                     </span>
                                 </div>
                             </div>
-                        }                        
+                        } 
+                        {
+                            item.pair && 
+                            <div className="price-box">
+                                <span className="bid">Price</span>
+                                <div className="price-wrap">
+                                    <img src={BidImageIcon} alt="BidImageIcon" />
+                                    <span className="price">
+                                        <span>{formatNum(item.pair.price)} {getCurrencyInfo(item.pair.tokenAdr)?.symbol}</span>                                        
+                                    </span>
+                                </div>
+                            </div>
+                        }                       
                         <div className="creator-box">
                             <span className="col-1">Owner</span>
                             <span className="col-2" style={{cursor:'pointer'}} onClick={(event) => {

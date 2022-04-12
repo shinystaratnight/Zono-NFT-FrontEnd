@@ -13,13 +13,13 @@ const GuidesArea = () => {
             <Element.SectionTitleBox textAlign='center'>
               <span>Guides</span>
               <h2>
-                {`Guides For NFT${process.env.REACT_APP_TOKEN}`}
+                {`Guides For Zono NFT Marketplace`}
               </h2>
               <Element.EmBar margin='0 auto 25px'>
                 <Element.EmBarBg></Element.EmBarBg>
               </Element.EmBar>
               <p className='sub-title'>
-                Get to know how to use <span className='token-info'>{ `${process.env.REACT_APP_TOKEN} NFT Marketplace` }</span>, how to sell or buy, and how to create your store on our platform.
+                Get to know how to use <span className='token-info'>Zono NFT Marketplace</span>, how to sell or buy, and how to create your store on our platform.
               </p>
             </Element.SectionTitleBox>
           </GridItem>

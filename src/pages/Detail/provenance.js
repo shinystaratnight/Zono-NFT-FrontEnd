@@ -1,7 +1,7 @@
 import React from 'react';
 import * as S from './styles';
 import { format } from "date-fns";
-import { formatNum } from "../../utils";
+import { formatNum, getCurrencyInfo } from "../../utils";
 
 function Provenance(props) {
 	
@@ -19,7 +19,7 @@ function Provenance(props) {
 				<S.ProvenanceName >
 					<span>{event.name} {event.name === 'Sold' ? ' to' : ' by'} </span>
 					@{((event.name === 'Listed') || (event.name === 'Bid')) ? event.fromUser.name : event.toUser.name}
-					<span style={{ display: event.price > 0 ? '' : 'none' }}> (Price : {formatNum(event.price)} {process.env.REACT_APP_TOKEN})</span>
+					<span style={{ display: event.price > 0 ? '' : 'none' }}> (Price : {formatNum(event.price)} {getCurrencyInfo(event.tokenAdr)?.symbol})</span>
 				</S.ProvenanceName>
 				<S.ProvenanceTime>{eventTime}</S.ProvenanceTime>
 			</S.ProvenanceContent>
