@@ -37,8 +37,7 @@ export const Title = styled.h1`
   color: #fff;
   text-shadow: 1px 1px 0 #000, -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 2px 2px 3px #000;
   font-size: 1.5rem;
-  padding-left: 20px;
-  font-family: 'FightingSpirit';
+  padding-left: 20px;    
 `
 export const WalletWrapper = styled.div`
   width: 90%;  
@@ -67,8 +66,7 @@ export const WalletLogo = styled.div`
 `
 export const WalletTitle = styled.h3`
   font-size: 1.2rem;  
-  cursor: pointer;
-  font-family: 'FightingSpirit';
+  cursor: pointer;  
   color: #fff;
   margin-left: 0.8rem;
   text-shadow: 1px 1px 0 #000, -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 2px 2px 3px #000;
