@@ -67,7 +67,7 @@ const ConnectDialog = (props) => {
           </WalletWrapper>
           <TopLeftCorner className='top-left' />
           <BottomRightRadius className='bottom-right' />
-          <MiddleBorder className='middle-border' />          
+          <MiddleBorder className='middle-border' />
         </Paper>
       </Fade>
     </Modal>

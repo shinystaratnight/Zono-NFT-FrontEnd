@@ -19,7 +19,7 @@ const GuidesArea = () => {
                 <Element.EmBarBg></Element.EmBarBg>
               </Element.EmBar>
               <p className='sub-title'>
-                Get to know how to use NFTLand - Marketplace, how to sell or buy, and how to create your store on our platform.
+                Get to know how to use <span className='token-info'>{ `${process.env.REACT_APP_TOKEN} NFT Marketplace` }</span>, how to sell or buy, and how to create your store on our platform.
               </p>
             </Element.SectionTitleBox>
           </GridItem>

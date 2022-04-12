@@ -2,12 +2,11 @@ import styled from 'styled-components';
 
 export const Paper = styled.div`
   outline: none !important;    
-  background-color: #fff;
-  max-width: 20rem;
+  background-color: white;
+  max-width: 300px;
   position: relative;
   width: 95vw;
   border-radius: 7px;
-  z-index: 2;
   &:hover {
     box-shadow: 0 0 5px #fff;
     .top-left {
@@ -23,52 +22,16 @@ export const Paper = styled.div`
     }
   }  
 `
-
-export const ModalHeader = styled.div`
-  width: 100%;
-  height: 5rem;
-  border-bottom: 3px solid #eee;
-  border-top-left-radius: 2rem;
-  border-top-right-radius: 2rem;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-`
-export const Title = styled.h1`
-  color: #222;  
-  font-size: 1.5rem;
-  padding-left: 20px;    
-`
-export const WalletWrapper = styled.div`
-  width: 90%;  
-  margin-left: auto;
-  margin-right: auto;
-  padding-top: 1rem;
-  padding-bottom: 2rem;
-`
-export const WalletItem = styled.div`
-  display: flex;
-  align-items: center;
-  margin-top: 0.8rem;
-  cursor: pointer;
-  position: relative;
-  z-index: 2;
-`
-export const WalletLogo = styled.div`
-  width: 3.5rem;
-  height: 3.5rem;  
-  border-radius: 50%;
-  svg {
-    width: 100%;
-    height: 100%;
-    border-radius: 50%;
+export const ModalContents = styled.div`
+  padding: 2rem;
+  p {
+    font-size: 16px;
+    font-weight: 400;
+    max-width: 600px;
+    margin: 0 0 20px;
+    color: #777;
+    line-height: 1.6;
   }
-`
-export const WalletTitle = styled.h3`
-  font-size: 1.2rem;  
-  cursor: pointer;  
-  color: #222;
-  margin-left: 0.8rem;  
 `
 export const TopLeftCorner = styled.div`
   position: absolute;
@@ -101,5 +64,5 @@ export const MiddleBorder = styled.div`
   transition: all .3s ease;
   left: 50%;
   transform: translateX(-50%);
-  height: calc(100% + 6px); 
+  height: calc(100% + 6px);
 `

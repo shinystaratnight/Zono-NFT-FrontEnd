@@ -138,10 +138,7 @@ export const LikeCount = styled.div`
   transition: all 0.12s ease-in-out 0s;
   padding-top: 0;
   padding-bottom: 0;
-  color: #212529;  
-  &:hover {
-    background-color: rgb(230, 230, 230);
-  }
+  color: #212529; 
 `
 export const HeartIcon = styled(Heart)`
   width: 14px;  

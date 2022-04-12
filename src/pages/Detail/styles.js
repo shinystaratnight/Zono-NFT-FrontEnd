@@ -532,6 +532,27 @@ export const ProvenanceTime = styled.div`
 // Modal
 export const ModalBody = styled.div`
   padding: 8px 12px;
+  background-color: white;
+  border-radius: 7px;
+  padding: 20px;
+  outline: none !important;
+  width: 95vw;
+  max-width: 500px;
+	position: relative;
+	&:hover {
+    box-shadow: 0 0 5px #fff;
+    .top-left {
+      width: 4rem;
+      height: 3rem;
+    }
+    .bottom-right {
+      width: 4rem;
+      height: 3rem;
+    }
+    .middle-border {
+      width: 5rem;
+    }
+  }
 `;
 
 export const ModalHeader = styled.div`
@@ -566,24 +587,26 @@ export const ModalPrice = styled.div`
 `;
 
 export const BidPrice = styled.div`
-    display: flex;
-    align-items: flex-end;
-    margin: 20px 0;
-    justify-content: space-between;
+	display: flex;
+	align-items: center;
+	margin: 20px 0;
+	justify-content: space-between;
 `;
 
 export const ModalMainPrice = styled.input`
-    font-size: 30px;
-    line-height: 40px;
-    flex-grow: 1;
-    width: 250px;
-    text-align: center;
-    border: unset;
-    outline: none;
-    &::-webkit-inner-spin-button, &::-webkit-outer-spin-button {
-        -webkit-appearance: none;
-        margin: 0;
-    }
+	font-size: 30px;
+	line-height: 40px;
+	flex-grow: 1;
+	max-width: 250px;
+	text-align: center;
+	border: unset;
+	outline: none;
+	flex: 1;
+  width: 30%;
+	&::-webkit-inner-spin-button, &::-webkit-outer-spin-button {
+			-webkit-appearance: none;
+			margin: 0;
+	}
 `;
 
 export const BidUsd = styled.div`
@@ -787,3 +810,37 @@ export const StartingDateSelect = styled.select`
 export const OrderByOption = styled.option`
     
 `;
+export const TopLeftCorner = styled.div`
+  position: absolute;
+  width: 1rem;
+  height: 1rem;
+  transition: all .3s ease;
+  border-top: 3px solid var(--colorOrange);
+  border-left: 3px solid var(--colorOrange);
+  top: -3px;
+  left: -3px;
+  border-top-left-radius: 10px;
+`
+export const BottomRightRadius = styled.div`
+  border-bottom: 3px solid var(--colorOrange);
+  border-right: 3px solid var(--colorOrange);
+  bottom: -3px;
+  right: -3px;
+  border-bottom-right-radius: 10px;
+  position: absolute;
+  width: 1rem;
+  height: 1rem;
+  transition: all .3s ease;
+`
+export const MiddleBorder = styled.div`
+  width: 2rem; 
+  top: -3px;
+  border-bottom: 3px solid var(--colorOrange);
+  border-top: 3px solid var(--colorOrange);
+  position: absolute;
+  transition: all .3s ease;
+  left: 50%;
+  transform: translateX(-50%);
+  height: calc(100% + 6px);
+	z-index: -1;
+`
