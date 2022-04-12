@@ -65,8 +65,7 @@ const Profile = (props) => {
 
     let paramData = { 
       sortDir: 'desc',
-      sortBy: 'timestamp',
-      saleType: 'all'
+      sortBy: 'timestamp'
     }   
 
     if (searchTextKey) {
