@@ -1,17 +1,22 @@
 import React from 'react'
+import { useHistory } from 'react-router-dom'
+import { useWeb3React } from '@web3-react/core'
 
 import { GridContainer, GridItem } from 'components/Grid'
 import * as Element from './styles'
 
-const Slider = (props) => {
+const Slider = () => {
+
+  const history = useHistory()
+  const { account } = useWeb3React();
 
   return (
     <Element.SliderSection>
       <Element.SliderAnimateImg>
-        <img src='/images/home-animation-image1.png' />
+        <img src='/images/home-animation-image1.png' alt='Home' />
       </Element.SliderAnimateImg>
       <Element.SliderAnimateDown>
-        <img src='/images/home-animation-image1.png' />
+        <img src='/images/home-animation-image1.png' alt='Home' />
       </Element.SliderAnimateDown>
       <Element.SliderInner>
         <GridContainer>
@@ -29,12 +34,16 @@ const Slider = (props) => {
                   buy other unique items like visual arts, games, video & music.
                 </Element.Description>                
                 <Element.SliderBtns>
-                  <Element.OutlineBtn>
+                  <Element.OutlineBtn onClick={() => history.push('/explore')}>
                     Discover NFTs
                   </Element.OutlineBtn>
-                  <Element.SaleBtn>
-                    Sell NFTs
-                  </Element.SaleBtn>
+                  {
+                    account && (
+                      <Element.SaleBtn onClick={() => history.push('/mint')}>
+                        Mint NFTs
+                      </Element.SaleBtn>
+                    )
+                  }
                 </Element.SliderBtns>
               </Element.SliderInformation>
             </GridItem>
@@ -48,22 +57,22 @@ const Slider = (props) => {
                     <img src='/images/screen1.png' alt='Screen' />
                   </Element.SliderItemZero>
                   <Element.SliderItemOne>
-                    <img src='/images/screen2.png' />
+                    <img src='/images/screen2.png' alt='Screen' />
                   </Element.SliderItemOne>
                   <Element.SliderItemTwo>
-                    <img src='/images/screen3.png' />
+                    <img src='/images/screen3.png' alt='Screen' />
                   </Element.SliderItemTwo>
                   <Element.SliderItemThree>
-                    <img src='/images/screen4.png' />
+                    <img src='/images/screen4.png' alt='Screen' />
                   </Element.SliderItemThree>
                   <Element.SliderItemFour>
-                    <img src='/images/screen5.png' />
+                    <img src='/images/screen5.png' alt='Screen' />
                   </Element.SliderItemFour>
                 </Element.SliderArtScreen>
                 <img src='/images/computer.png' alt='Computer' />
               </Element.SliderImages>
               <Element.SliderResponsiveScreen>
-                <img src='/images/slide-image.png' alt="Slider Image" />
+                <img src='/images/slide-image.png' alt="Slider_Image" />
               </Element.SliderResponsiveScreen>
             </GridItem>
           </Element.SliderRow>

@@ -21,7 +21,7 @@ import {
   TriggerButton,
   NavContents,
   NavLinkList,
-  NavLink  
+  NavLink
 } from './styles'
 
 const Navbar = (props) => {
@@ -29,7 +29,7 @@ const Navbar = (props) => {
   const { connectAccount, window } = props
   const location = useLocation()
   const history = useHistory()
-  
+
   const { account, active, deactivate } = useWeb3React();
 
   const [openSidebar, setOpenSidebar] = useState(false)
@@ -78,7 +78,7 @@ const Navbar = (props) => {
             <NavLink
               href='/explore'
               onClick={(e) => { e.preventDefault(); history.push('/explore') }}
-              active={location.pathname === '/explore' || location.pathname === '/'}
+              active={location.pathname === '/explore'}
             >
               Explore
             </NavLink>
@@ -105,11 +105,11 @@ const Navbar = (props) => {
                   >
                     Mint
                   </NavLink>
-                  <NavLink 
+                  <NavLink
                     href={`/profile/${account}`}
-                    onClick={(e) => { e.preventDefault(); history.push(`/profile/${account}`)}}
+                    onClick={(e) => { e.preventDefault(); history.push(`/profile/${account}`) }}
                     active={location.pathname.includes('/profile/')}
-                    >
+                  >
                     My items
                   </NavLink>
                   <AccountButton

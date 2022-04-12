@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+import { RightArrowAlt } from '@styled-icons/boxicons-regular/RightArrowAlt'
 
 export const SliderSection = styled.div`
   background-image: url(/images/slider-bg.png);
@@ -485,5 +486,216 @@ export const AboutEthCoin = styled.div`
     max-width: 40px;
     animation: crescendo 1.5s alternate infinite ease-in;
     vertical-align: middle;
+  }
+`
+export const MostViewedSection = styled.div`
+  position: relative;
+  background-color: rgb(239 239 239 / 35%);
+  border-top: 1px solid #eee;
+  padding: 120px 0px;
+  @media screen and (max-width: 991px) {
+    padding: 60px 0px;
+  }
+`
+export const DigitalArtsSection = styled.div`
+  padding: 120px 0px;
+  @media screen and (max-width: 991px) {
+    padding: 60px 0px;
+  }
+`
+export const EarnImages = styled.div`
+  text-align: center;
+  width: 50%;
+  display: table-cell;
+  vertical-align: middle;
+  padding: 0 15px;
+  img {
+    vertical-align: middle;
+  }
+  @media screen and (min-width: 1601px) {
+    display: none;
+  }
+  @media screen and (max-width: 767px) {
+    margin-bottom: 20px;
+    text-align: center;
+    order: 1;
+    width: 100%;
+    display: block;
+    padding: 0px;
+    img {
+      max-width: 380px;
+    }
+  }
+  @media screen and (max-width: 575px) {
+    img {
+      max-width: 280px!important;
+    }    
+  }
+`
+export const PlatformArtistImages = styled.div`
+  text-align: center;
+  width: 50%;
+  display: table-cell;
+  vertical-align: middle;
+  padding: 0 15px;
+  position: relative;
+  left: 60px;
+  & > img {
+    max-width: 450px;
+    vertical-align: middle;
+  }
+  @media screen and (max-width: 1600px) {
+    display: none;
+  }
+`
+export const PlatformArtistLeft = styled.div`
+  position: absolute;
+  left: -64px;
+`
+export const PlatformArtistBox = styled.div`
+  text-align: center;
+  img {
+    max-width: 115px;
+    transition: all 0.5s;
+    vertical-align: middle;
+  }
+  &:hover {
+    img {
+      transform: scale(1.1);
+    }
+  }
+`
+export const PlatformArtistCircle = styled.div`
+  position: absolute;
+  top: -50px;
+  right: -150px;
+  img {
+    max-width: 250px;
+    animation: rounds 1.5s alternate infinite ease-in;
+    vertical-align: middle;
+    text-align: center;
+  }
+`
+export const BeginListingSection = styled.div`
+  padding-bottom: 150px !important;
+  padding-top: 150px;
+  border-top: 1px solid #eee;
+  @media screen and (max-width: 767px) {
+    .sub-title {
+      max-width: unset;
+    }
+    h2+div {
+      margin-left: 0;
+    }
+  }
+  @media screen and (max-width: 479px) {
+    h2+div {
+      margin-left: auto;
+    }   
+  }
+`
+export const EarnBtn = styled.div`
+  margin-top: 20px;
+  button {
+    width: auto !important
+  }
+`
+export const ArrowrightIcon = styled(RightArrowAlt)`
+  margin-left: 3px;
+  width: 24px;
+`
+export const ListSellBox = styled.div`
+  position: relative;
+  left: -40px;
+  text-align: center;
+  width: 50%;
+  display: table-cell;
+  vertical-align: middle;
+  padding: 0 15px;
+  & > img {
+    max-width: 340px;
+    vertical-align: middle;
+  }
+  @media screen and (max-width: 1600px) {
+    display: none;
+  }
+`
+export const ListSellTopImg = styled.div`
+  position: absolute;
+  top: -75px;
+  left: -35px;
+  animation: mover 1s infinite alternate;
+  text-align: center;
+  img {
+    max-width: 240px;
+    vertical-align: middle;
+  }
+`
+export const ListSellToken = styled.div`
+  position: absolute;
+  bottom: -40px;
+  right: 5px;
+  text-align: center;
+  animation: mover 1s infinite alternate;
+  img {
+    max-width: 140px;
+    vertical-align: middle;
+  }
+`
+export const ListEarnImagesResponsive = styled.div`
+  width: 50%;
+  display: table-cell;
+  vertical-align: middle;
+  padding: 0 15px;
+  img {
+    vertical-align: middle;
+  }
+  @media screen and (min-width: 1601px) {
+    display: none;
+  }
+  @media screen and (max-width: 767px) {
+    display: none;
+  }
+`
+export const GuidesAreaSection = styled.div`
+  padding: 120px 0px;
+  border-top: 1px solid #eee;
+  @media screen and (max-width: 991px) {
+    padding: 60px 0px;
+  }
+`
+export const GuideBox = styled.div`
+  margin-top: 60px;
+  text-align: center!important;
+`
+export const GuideMedia = styled.div`
+  margin-bottom: 30px;
+  text-align: center!important;
+  img {
+    vertical-align: middle;
+  }
+`
+export const GuideInfo = styled.div`
+  text-align: center!important;
+  h3 {
+    margin-bottom: 4px;
+    font-size: 18px;
+    font-weight: 700;
+    margin: 0;   
+    line-height: 1.4;
+    color: #222;
+    text-transform: capitalize;
+  }
+  p {
+    font-size: 16px;
+    color: #777;
+    line-height: 1.6;
+    margin: 0;
+    font-weight: 400;
+  }
+  @media screen and (max-width: 479px) {
+    h3 {
+      font-size: 16px;
+    }
   }
 `

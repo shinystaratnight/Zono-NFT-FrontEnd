@@ -28,17 +28,17 @@ const Profile = (props) => {
   let { id } = useParams();
   const { user } = props;
 
+  const pageSize = 9;
+
   const [userProfile, setUserProfile] = useState(undefined)
   const { account, chainId, library } = useWeb3React();
   const [balance, setBalance] = useState()
   const [etherBalance, setEtherBalance] = useState()
 
   const [items, setItems] = useState([])
-  const [page, setPage] = useState(1)
-  const [pageSize, setPageSize] = useState(9)
+  const [page, setPage] = useState(1)  
   const [startIndex, setStartIndex] = useState(0)
-  const [endIndex, setEndIndex] = useState(pageSize)
-  const [viewMethod, setViewMethod] = useState('grid')
+  const [endIndex, setEndIndex] = useState(pageSize)  
   const [searchText, setSearchText] = useState("")  
   const [itemType, setItemType] = useState('owned')
   const [loading, setLoading] = useState(false)

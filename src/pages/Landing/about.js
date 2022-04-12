@@ -34,7 +34,7 @@ const About = () => {
                 <Element.SingelAboutBox>
                   <Element.SingelAboutBoxItem>
                     <Element.SingelAboutBoxIcon>
-                      <img src='/images/nft_governance.png' />
+                      <img src='/images/nft_governance.png' alt='NFT Governance' />
                     </Element.SingelAboutBoxIcon>
                     <Element.SingelAboutBoxInfo>
                       <h3>Explore NFTs</h3>
@@ -45,7 +45,7 @@ const About = () => {
                   </Element.SingelAboutBoxItem>
                   <Element.SingelAboutBoxItem>
                     <Element.SingelAboutBoxIcon>
-                      <img src='/images/super_nft.png' />
+                      <img src='/images/super_nft.png' alt='Super NFT' />
                     </Element.SingelAboutBoxIcon>
                     <Element.SingelAboutBoxInfo>
                       <h3>Buy & Sell NFTs</h3>

@@ -1,0 +1,67 @@
+import React, { useState, useEffect, useCallback } from 'react'
+import axios from 'axios'
+import { useWeb3React } from '@web3-react/core'
+
+import { GridContainer, GridRow, GridItem } from 'components/Grid'
+import NftGridCard from 'components/NftGridCard'
+import * as Element from './styles'
+
+const MostViewed = () => {
+
+  const { account } = useWeb3React();
+
+  const [items, setItems] = useState([])
+
+  const fetchItems = useCallback(() => {
+    let paramData = {
+      sortDir: 'desc',
+      sortBy: 'timestamp',
+      saleType: 'all',
+      likes: account ?? '',
+    }
+
+    axios.get("/api/item", {
+      params: paramData
+    })
+      .then(res => {       
+        setItems(res.data.items)
+      })
+      .catch(() => {
+        setItems([])
+      })
+  }, [account])
+
+  useEffect(() => {
+    fetchItems()
+  }, [fetchItems])
+
+  return (
+    <Element.MostViewedSection>
+      <GridContainer>
+        <GridRow>
+          <GridItem xl={12} lg={12} md={12} sm={12}>
+            <Element.SectionTitleBox textAlign='center'>
+              <span>Items</span>
+              <h2>Items Viewed The Most</h2>
+              <Element.EmBar margin='0 auto 25px'>
+                <Element.EmBarBg></Element.EmBarBg>
+              </Element.EmBar>
+              <p className='sub-title'>
+                You can see the best and most viewed items; from all categories, we have a wide range of items available on our marketplace.
+              </p>
+            </Element.SectionTitleBox>
+          </GridItem>
+          {
+            items.map((item, index) => (
+              <GridItem xl={3} lg={4} md={4} sm={6} xs={12} key={index}>
+                <NftGridCard item={item} />
+              </GridItem>
+            ))
+          }
+        </GridRow>
+      </GridContainer>
+    </Element.MostViewedSection>
+  )
+}
+
+export default MostViewed

@@ -1,11 +1,12 @@
 import React from 'react'
 
-import { GridContainer, GridRow, GridItem } from 'components/Grid'
-import * as Element from './styles'
-
 import Slider from './slider'
 import LiveAuctions from './liveAuctions'
 import About from './about'
+import MostViewed from './mostViewed'
+import DigitalArts from './digitalArts'
+import BeginListing from './beginListing'
+import GuidesArea from './guidesArea'
 
 const Landing = (props) => {
 
@@ -14,6 +15,10 @@ const Landing = (props) => {
       <Slider />
       <LiveAuctions />
       <About />
+      <MostViewed />
+      <DigitalArts />
+      <BeginListing />
+      <GuidesArea />
     </div>
   )
 }
