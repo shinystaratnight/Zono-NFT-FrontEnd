@@ -16,15 +16,15 @@ const MostViewed = () => {
   const fetchItems = useCallback(() => {
     let paramData = {
       sortDir: 'desc',
-      sortBy: 'timestamp',
-      saleType: 'likeCount'     
+      sortBy: 'likeCount',
+      saleType: 'all'
     }
 
     axios.get("/api/item", {
       params: paramData
     })
       .then(res => {
-        const sortedItems = res.data.items.sort(function (a, b) {
+        const sortedItems = res.data.items.filter((item => item.likeCount > 0)).sort(function (a, b) {
           return b.likeCount - a.likeCount;
         })
         setItems(slice(sortedItems, 0, 8))
@@ -41,7 +41,7 @@ const MostViewed = () => {
   return (
     <Element.MostViewedSection>
       <GridContainer>
-        <GridRow>
+        <GridRow justifyContent='center'>
           <GridItem xl={12} lg={12} md={12} sm={12}>
             <Element.SectionTitleBox textAlign='center'>
               <span>Items</span>
