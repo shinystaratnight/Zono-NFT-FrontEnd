@@ -5,7 +5,6 @@ import { useParams } from "react-router-dom"
 import { useWeb3React } from '@web3-react/core'
 import axios from 'axios'
 import Querystring from 'query-string'
-import Modal from "react-modal";
 import DatePicker from 'react-datepicker'
 
 import CircularProgress from '@material-ui/core/CircularProgress';
@@ -20,9 +19,10 @@ import { GridContainer, GridRow, GridItem } from 'components/Grid'
 import CustomButton from 'components/CustomButton'
 import CustomSnackbar from 'components/CustomSnackbar'
 import * as Element from "./styles";
+import ModalBox from './modal'
 import "react-datepicker/dist/react-datepicker.css";
 
-function Detail(props) {
+function Detail(props) {	
 
 	const base_url = process.env.REACT_APP_BASE_URL;
 	console.log("BASE: ", base_url);
@@ -600,317 +600,206 @@ function Detail(props) {
 						</Element.DetailContainer>
 					</GridItem>
 
-					<Modal
-						isOpen={showPlaceBidModal}
-						onRequestClose={() => closePlaceBidModal()}
-						ariaHideApp={false}
-						style={{
-							overlay: {
-								position: 'fixed',
-								top: 0,
-								left: 0,
-								right: 0,
-								bottom: 0,
-								backgroundColor: 'rgba(60, 37, 53, 0.25)',
-								zIndex: 99,
-							},
-							content: {
-								top: '50%',
-								left: '50%',
-								right: 'auto',
-								bottom: 'auto',
-								marginRight: '-50%',
-								transform: 'translate(-50%, -50%)',
-								width: '100%',
-								maxWidth: '500px',
-								borderRadius: '20px',
-								zIndex: 9999
-							},
-						}}
+					<ModalBox
+						open={showPlaceBidModal}
+						handleClose={closePlaceBidModal}
 					>
-						<Element.ModalBody>
-							<Element.ModalHeader>
-								<Element.ModalCloseIcon size={32} onClick={() => closePlaceBidModal()} />
-							</Element.ModalHeader>
-							<Element.ModalTitle>Your Bid</Element.ModalTitle>
-							<Element.ModalRow>
-								<Element.ModalLabel>Current bid</Element.ModalLabel>
-								<Element.ModalPrice>{formatNum(item?.auction?.price)} {process.env.REACT_APP_TOKEN}</Element.ModalPrice>
-							</Element.ModalRow>
-							<Element.BidPrice>
-								<Element.ModalLabel>Your bid</Element.ModalLabel>
-								<Element.ModalMainPrice type={"number"} value={bidPrice} onChange={event => setBidPrice(event.target.value)} />
-								<Element.UnitContainer>
-									<Element.CoinImage src={"/images/logo.png"} />
-									<Element.Unit>{process.env.REACT_APP_TOKEN}</Element.Unit>
-								</Element.UnitContainer>
-							</Element.BidPrice>
-							<Element.ModalRow>
-								<Element.ModalLabel>Available</Element.ModalLabel>
-								<Element.ModalPrice>{formatNum(balance)} {process.env.REACT_APP_TOKEN}</Element.ModalPrice>
-							</Element.ModalRow>
-							<Element.ModalAction>
-								<Element.ModalButton onClick={() => placeBid()}>
-									{
-										biddingStatus ? <CircularProgress style={{ width: "16px", height: "16px", color: "white", }} /> : "Place a Bid"
-									}
-								</Element.ModalButton>
-							</Element.ModalAction>
-						</Element.ModalBody>
-					</Modal>
+						<Element.ModalHeader>
+							<Element.ModalCloseIcon size={32} onClick={() => closePlaceBidModal()} />
+						</Element.ModalHeader>
+						<Element.ModalTitle>Your Bid</Element.ModalTitle>
+						<Element.ModalRow>
+							<Element.ModalLabel>Current bid</Element.ModalLabel>
+							<Element.ModalPrice>{formatNum(item?.auction?.price)} {process.env.REACT_APP_TOKEN}</Element.ModalPrice>
+						</Element.ModalRow>
+						<Element.BidPrice>
+							<Element.ModalLabel>Your bid</Element.ModalLabel>
+							<Element.ModalMainPrice type={"number"} value={bidPrice} onChange={event => setBidPrice(event.target.value)} />
+							<Element.UnitContainer>
+								<Element.CoinImage src={"/images/logo.png"} />
+								<Element.Unit>{process.env.REACT_APP_TOKEN}</Element.Unit>
+							</Element.UnitContainer>
+						</Element.BidPrice>
+						<Element.ModalRow>
+							<Element.ModalLabel>Available</Element.ModalLabel>
+							<Element.ModalPrice>{formatNum(balance)} {process.env.REACT_APP_TOKEN}</Element.ModalPrice>
+						</Element.ModalRow>
+						<Element.ModalAction>
+							<Element.ModalButton onClick={() => placeBid()}>
+								{
+									biddingStatus ? <CircularProgress style={{ width: "16px", height: "16px", color: "white", }} /> : "Place a Bid"
+								}
+							</Element.ModalButton>
+						</Element.ModalAction>
+					</ModalBox>
 
-					<Modal
-						isOpen={showBuyNowModal}
-						onRequestClose={() => setShowBuyNowModal(false)}
-						ariaHideApp={false}
-						style={{
-							overlay: { position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(60, 37, 53, 0.25)', zIndex: 99 },
-							content: { top: '50%', left: '50%', right: 'auto', bottom: 'auto', marginRight: '-50%', transform: 'translate(-50%, -50%)', width: '100%', maxWidth: '500px', borderRadius: '20px', zIndex: 9999 },
-						}}
+					<ModalBox
+						open={showBuyNowModal}
+						handleClose={() => setShowBuyNowModal(false)}
 					>
-						<Element.ModalBody>
-							<Element.ModalHeader>
-								<Element.ModalCloseIcon size={32} onClick={() => setShowBuyNowModal(false)} />
-							</Element.ModalHeader>
-							<Element.ModalTitle>
-								<Element.ModalLabel>You will pay</Element.ModalLabel>
-								<Element.PayAmount>
-									<Element.CoinImage src={"/images/logo.png"} />
-									<Element.Price>{formatNum(item?.pair?.price)}</Element.Price>
-									<Element.Unit>{process.env.REACT_APP_TOKEN}</Element.Unit>
-								</Element.PayAmount>
+						<Element.ModalHeader>
+							<Element.ModalCloseIcon size={32} onClick={() => setShowBuyNowModal(false)} />
+						</Element.ModalHeader>
+						<Element.ModalTitle>
+							<Element.ModalLabel>You will pay</Element.ModalLabel>
+							<Element.PayAmount>
+								<Element.CoinImage src={"/images/logo.png"} />
+								<Element.Price>{formatNum(item?.pair?.price)}</Element.Price>
+								<Element.Unit>{process.env.REACT_APP_TOKEN}</Element.Unit>
+							</Element.PayAmount>
 
-							</Element.ModalTitle>
-							<Element.ModalRow>
-								<Element.ModalLabel>Available</Element.ModalLabel>
-								<Element.ModalPrice>{formatNum(balance)} {process.env.REACT_APP_TOKEN}</Element.ModalPrice>
-							</Element.ModalRow>
-							<Element.ModalActions>
-								<Element.ModalCancelButton onClick={() => setShowBuyNowModal(false)}>Cancel</Element.ModalCancelButton>
-								<Element.ModalSubmitButton onClick={() => buyItem()}>
-									{
-										buyingStatus ? <CircularProgress style={{ width: "16px", height: "16px", color: "white", }} /> : "Confirm"
-									}
-								</Element.ModalSubmitButton>
-							</Element.ModalActions>
-						</Element.ModalBody>
-					</Modal>
+						</Element.ModalTitle>
+						<Element.ModalRow>
+							<Element.ModalLabel>Available</Element.ModalLabel>
+							<Element.ModalPrice>{formatNum(balance)} {process.env.REACT_APP_TOKEN}</Element.ModalPrice>
+						</Element.ModalRow>
+						<Element.ModalActions>
+							<Element.ModalCancelButton onClick={() => setShowBuyNowModal(false)}>Cancel</Element.ModalCancelButton>
+							<Element.ModalSubmitButton onClick={() => buyItem()}>
+								{
+									buyingStatus ? <CircularProgress style={{ width: "16px", height: "16px", color: "white", }} /> : "Confirm"
+								}
+							</Element.ModalSubmitButton>
+						</Element.ModalActions>
+					</ModalBox>
 
-					<Modal
-						isOpen={showPutMarketPlace}
-						onRequestClose={() => setShowPutMarketPlace(false)}
-						ariaHideApp={false}
-						style={{
-							overlay: {
-								position: 'fixed',
-								top: 0,
-								left: 0,
-								right: 0,
-								bottom: 0,
-								backgroundColor: 'rgba(60, 37, 53, 0.25)',
-								zIndex: 99,
-							},
-							content: {
-								top: '50%',
-								left: '50%',
-								right: 'auto',
-								bottom: 'auto',
-								marginRight: '-50%',
-								transform: 'translate(-50%, -50%)',
-								width: '100%',
-								maxWidth: '500px',
-								borderRadius: '20px',
-								zIndex: 9999
-							},
-						}}
+					<ModalBox
+						open={showPutMarketPlace}
+						handleClose={() => setShowPutMarketPlace(false)}
 					>
-						<Element.ModalBody>
-							<Element.ModalHeader>
-								<Element.ModalCloseIcon size={32} onClick={() => setShowPutMarketPlace(false)} />
-							</Element.ModalHeader>
-							<Element.ModalTitle>Put on Marketplace</Element.ModalTitle>
-							<Element.PutTypes>
-								<Element.PutType onClick={() => setPutType('fixed')} className={putType === 'fixed' ? 'active' : ''}>
-									<Element.FixedIcon size={32} />
-									<Element.TypeLabel>Fixed price</Element.TypeLabel>
-								</Element.PutType>
-								<Element.PutType onClick={() => setPutType('timed')} className={putType === 'timed' ? 'active' : ''}>
-									<Element.TimeIcon size={36} />
-									<Element.TypeLabel>Timed auction</Element.TypeLabel>
-								</Element.PutType>
-							</Element.PutTypes>
-							{
-								putType === 'fixed' &&
+						<Element.ModalHeader>
+							<Element.ModalCloseIcon size={32} onClick={() => setShowPutMarketPlace(false)} />
+						</Element.ModalHeader>
+						<Element.ModalTitle>Put on Marketplace</Element.ModalTitle>
+						<Element.PutTypes>
+							<Element.PutType onClick={() => setPutType('fixed')} className={putType === 'fixed' ? 'active' : ''}>
+								<Element.FixedIcon size={32} />
+								<Element.TypeLabel>Fixed price</Element.TypeLabel>
+							</Element.PutType>
+							<Element.PutType onClick={() => setPutType('timed')} className={putType === 'timed' ? 'active' : ''}>
+								<Element.TimeIcon size={36} />
+								<Element.TypeLabel>Timed auction</Element.TypeLabel>
+							</Element.PutType>
+						</Element.PutTypes>
+						{
+							putType === 'fixed' &&
+							<Element.Field>
+								<Element.label>Price</Element.label>
+								<Element.InputContainer>
+									<Element.Input type={"number"} placeholder={"Enter Price"} value={putPrice} onChange={event => setPutPrice(event.target.value)} />
+									<Element.InputUnit>{process.env.REACT_APP_TOKEN}</Element.InputUnit>
+								</Element.InputContainer>
+							</Element.Field>
+						}
+						{
+							putType === 'timed' &&
+							<>
 								<Element.Field>
-									<Element.label>Price</Element.label>
+									<Element.label>Minimum bid</Element.label>
 									<Element.InputContainer>
-										<Element.Input type={"number"} placeholder={"Enter Price"} value={putPrice} onChange={event => setPutPrice(event.target.value)} />
+										<Element.Input type={"number"} placeholder={"Enter minimum bid"} value={putPrice} onChange={event => setPutPrice(event.target.value)} />
 										<Element.InputUnit>{process.env.REACT_APP_TOKEN}</Element.InputUnit>
 									</Element.InputContainer>
+
 								</Element.Field>
-							}
-							{
-								putType === 'timed' &&
-								<>
-									<Element.Field>
-										<Element.label>Minimum bid</Element.label>
-										<Element.InputContainer>
-											<Element.Input type={"number"} placeholder={"Enter minimum bid"} value={putPrice} onChange={event => setPutPrice(event.target.value)} />
-											<Element.InputUnit>{process.env.REACT_APP_TOKEN}</Element.InputUnit>
-										</Element.InputContainer>
+								<Element.SelectRow>
+									<Element.SelectField>
+										<Element.label>Starting Date</Element.label>
+										<Element.StartingDateSelect name={"starting_date"} defaultValue={startType} onChange={event => setStartType(event.target.value)}>
+											<Element.OrderByOption value={"now"}>Right after listing</Element.OrderByOption>
+											<Element.OrderByOption value={"specific"}>Pick specific date</Element.OrderByOption>
+										</Element.StartingDateSelect>
+										{
+											startType === "specific" &&
+											<DatePicker
+												selected={startDate}
+												onChange={value => setStartDate(value)}
+												className={"input-picker"}
+												showTimeSelect
+												dateFormat="Pp"
+											/>
+										}
+									</Element.SelectField>
+									<Element.SelectField>
+										<Element.label>Expiration Date</Element.label>
+										<Element.StartingDateSelect name={"expiration_date"} defaultValue={endType} onChange={event => setEndType(event.target.value)}>
+											<Element.OrderByOption value={"1"}>1 day</Element.OrderByOption>
+											<Element.OrderByOption value={"3"}>3 days</Element.OrderByOption>
+											<Element.OrderByOption value={"5"}>5 days</Element.OrderByOption>
+											<Element.OrderByOption value={"7"}>7 days</Element.OrderByOption>
+											<Element.OrderByOption value={"specific"}>Pick specific date</Element.OrderByOption>
+										</Element.StartingDateSelect>
+										{
+											endType === "specific" &&
+											<DatePicker
+												selected={endDate}
+												onChange={value => setEndDate(value)}
+												className={"input-picker"}
+												showTimeSelect
+												dateFormat="Pp"
+											/>
+										}
+									</Element.SelectField>
+								</Element.SelectRow>
+							</>
+						}
 
-									</Element.Field>
-									<Element.SelectRow>
-										<Element.SelectField>
-											<Element.label>Starting Date</Element.label>
-											<Element.StartingDateSelect name={"starting_date"} defaultValue={startType} onChange={event => setStartType(event.target.value)}>
-												<Element.OrderByOption value={"now"}>Right after listing</Element.OrderByOption>
-												<Element.OrderByOption value={"specific"}>Pick specific date</Element.OrderByOption>
-											</Element.StartingDateSelect>
-											{
-												startType === "specific" &&
-												<DatePicker
-													selected={startDate}
-													onChange={value => setStartDate(value)}
-													className={"input-picker"}
-													showTimeSelect
-													dateFormat="Pp"
-												/>
-											}
-										</Element.SelectField>
-										<Element.SelectField>
-											<Element.label>Expiration Date</Element.label>
-											<Element.StartingDateSelect name={"expiration_date"} defaultValue={endType} onChange={event => setEndType(event.target.value)}>
-												<Element.OrderByOption value={"1"}>1 day</Element.OrderByOption>
-												<Element.OrderByOption value={"3"}>3 days</Element.OrderByOption>
-												<Element.OrderByOption value={"5"}>5 days</Element.OrderByOption>
-												<Element.OrderByOption value={"7"}>7 days</Element.OrderByOption>
-												<Element.OrderByOption value={"specific"}>Pick specific date</Element.OrderByOption>
-											</Element.StartingDateSelect>
-											{
-												endType === "specific" &&
-												<DatePicker
-													selected={endDate}
-													onChange={value => setEndDate(value)}
-													className={"input-picker"}
-													showTimeSelect
-													dateFormat="Pp"
-												/>
-											}
-										</Element.SelectField>
-									</Element.SelectRow>
-								</>
-							}
+						<Element.ModalActions>
+							<Element.ModalCancelButton onClick={() => setShowPutMarketPlace(false)}>Cancel</Element.ModalCancelButton>
+							<Element.ModalSubmitButton onClick={() => putOnMarketPlace()}>
+								{
+									listingStatus || creatingAuctionStatus ? <CircularProgress style={{ width: "16px", height: "16px", color: "white", }} /> : "Confirm"
+								}
+							</Element.ModalSubmitButton>
+						</Element.ModalActions>
+					</ModalBox>
 
-							<Element.ModalActions>
-								<Element.ModalCancelButton onClick={() => setShowPutMarketPlace(false)}>Cancel</Element.ModalCancelButton>
-								<Element.ModalSubmitButton onClick={() => putOnMarketPlace()}>
-									{
-										listingStatus || creatingAuctionStatus ? <CircularProgress style={{ width: "16px", height: "16px", color: "white", }} /> : "Confirm"
-									}
-								</Element.ModalSubmitButton>
-							</Element.ModalActions>
-						</Element.ModalBody>
-					</Modal>
-
-					<Modal
-						isOpen={showEndAuction}
-						onRequestClose={() => setShowEndAuction(false)}
-						ariaHideApp={false}
-						style={{
-							overlay: {
-								position: 'fixed',
-								top: 0,
-								left: 0,
-								right: 0,
-								bottom: 0,
-								backgroundColor: 'rgba(60, 37, 53, 0.25)',
-								zIndex: 99,
-							},
-							content: {
-								top: '50%',
-								left: '50%',
-								right: 'auto',
-								bottom: 'auto',
-								marginRight: '-50%',
-								transform: 'translate(-50%, -50%)',
-								width: '100%',
-								maxWidth: '500px',
-								borderRadius: '20px',
-								zIndex: 9999
-							},
-						}}
+					<ModalBox
+						open={showEndAuction}
+						handleClose={() => setShowEndAuction(false)}
 					>
-						<Element.ModalBody>
-							<Element.ModalHeader>
-								<Element.ModalCloseIcon size={32} onClick={() => setShowEndAuction(false)} />
-							</Element.ModalHeader>
-							<Element.ModalTitle>
-								End Auction
-								<Element.PayAmount>
-									<Element.Price>Are you sure you want to end this auction ?</Element.Price>
-								</Element.PayAmount>
-							</Element.ModalTitle>
-							<Element.ModalActions>
-								<Element.ModalCancelButton onClick={() => setShowEndAuction(false)}>Cancel</Element.ModalCancelButton>
-								<Element.ModalSubmitButton onClick={() => endAuction()}>
-									{
-										endingAuctionStatus ? <CircularProgress style={{ width: "16px", height: "16px", color: "white", }} /> : "End Auction"
-									}
-								</Element.ModalSubmitButton>
-							</Element.ModalActions>
-						</Element.ModalBody>
-					</Modal>
+						<Element.ModalHeader>
+							<Element.ModalCloseIcon size={32} onClick={() => setShowEndAuction(false)} />
+						</Element.ModalHeader>
+						<Element.ModalTitle>
+							End Auction
+							<Element.PayAmount>
+								<Element.Price>Are you sure you want to end this auction ?</Element.Price>
+							</Element.PayAmount>
+						</Element.ModalTitle>
+						<Element.ModalActions>
+							<Element.ModalCancelButton onClick={() => setShowEndAuction(false)}>Cancel</Element.ModalCancelButton>
+							<Element.ModalSubmitButton onClick={() => endAuction()}>
+								{
+									endingAuctionStatus ? <CircularProgress style={{ width: "16px", height: "16px", color: "white", }} /> : "End Auction"
+								}
+							</Element.ModalSubmitButton>
+						</Element.ModalActions>
+					</ModalBox>
 
-					<Modal
-						isOpen={showUnlistMarketPlace}
-						onRequestClose={() => setShowUnlistMarketPlace(false)}
-						ariaHideApp={false}
-						style={{
-							overlay: {
-								position: 'fixed',
-								top: 0,
-								left: 0,
-								right: 0,
-								bottom: 0,
-								backgroundColor: 'rgba(60, 37, 53, 0.25)',
-								zIndex: 99,
-							},
-							content: {
-								top: '50%',
-								left: '50%',
-								right: 'auto',
-								bottom: 'auto',
-								marginRight: '-50%',
-								transform: 'translate(-50%, -50%)',
-								width: '100%',
-								maxWidth: '500px',
-								borderRadius: '20px',
-								zIndex: 9999
-							},
-						}}
+					<ModalBox
+						open={showUnlistMarketPlace}
+						handleClose={() => setShowUnlistMarketPlace(false)}
 					>
-						<Element.ModalBody>
-							<Element.ModalHeader>
-								<Element.ModalCloseIcon size={32} onClick={() => setShowUnlistMarketPlace(false)} />
-							</Element.ModalHeader>
-							<Element.ModalTitle>
-								Unlist Item
-								<Element.PayAmount>
-									<Element.Price>Are you sure you want to unlist this auction ?</Element.Price>
-								</Element.PayAmount>
-							</Element.ModalTitle>
-							<Element.ModalActions>
-								<Element.ModalCancelButton onClick={() => setShowUnlistMarketPlace(false)}>Cancel</Element.ModalCancelButton>
-								<Element.ModalSubmitButton onClick={() => unlistItem()}>
-									{
-										delistingStatus ? <CircularProgress style={{ width: "16px", height: "16px", color: "white", }} /> : "Unlist"
-									}
-								</Element.ModalSubmitButton>
-							</Element.ModalActions>
-						</Element.ModalBody>
-					</Modal>
-				
+						<Element.ModalHeader>
+							<Element.ModalCloseIcon size={32} onClick={() => setShowUnlistMarketPlace(false)} />
+						</Element.ModalHeader>
+						<Element.ModalTitle>
+							Unlist Item
+							<Element.PayAmount>
+								<Element.Price>Are you sure you want to unlist this auction ?</Element.Price>
+							</Element.PayAmount>
+						</Element.ModalTitle>
+						<Element.ModalActions>
+							<Element.ModalCancelButton onClick={() => setShowUnlistMarketPlace(false)}>Cancel</Element.ModalCancelButton>
+							<Element.ModalSubmitButton onClick={() => unlistItem()}>
+								{
+									delistingStatus ? <CircularProgress style={{ width: "16px", height: "16px", color: "white", }} /> : "Unlist"
+								}
+							</Element.ModalSubmitButton>
+						</Element.ModalActions>
+					</ModalBox>				
+
 					<CustomSnackbar
 						open={openSnackbar}
 						handleClose={handleCloseDialog}

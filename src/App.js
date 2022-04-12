@@ -2,9 +2,6 @@
 import React, { useState, useEffect } from "react";
 import { Switch, BrowserRouter as Router, Route } from "react-router-dom";
 import { useWeb3React } from '@web3-react/core'
-import { Modal } from '@material-ui/core';
-import Button from '@material-ui/core/button';
-import { makeStyles } from '@material-ui/core/styles';
 
 import { connectors, connectorLocalStorageKey } from 'utils/connectors'
 import { useEagerConnect } from "hooks/useEagerConnect"
@@ -23,34 +20,13 @@ import Detail from "pages/Detail";
 import Explore from 'pages/Explore'
 import ConnectDialog from 'components/ConnectDialog'
 import Landing from 'pages/Landing'
+import NetworkErrorDialog from 'components/NetworkErrorDialog'
 
 function App() {
 
   const [connectModalOpen, setConnectModalOpen] = useState(null);
   const [errorModalOpen, setErrorModalOpen] = useState(null);
-  const [networkError, setNetworkError] = useState(null);
-
-  function getModalStyle() {
-    const top = 50
-    const left = 50
-    return {
-      top: `${top}%`,
-      left: `${left}%`,
-      transform: `translate(-${top}%, -${left}%)`,
-    };
-  }
-  const useStyles = makeStyles((theme) => ({
-    paper: {
-      position: 'absolute',
-      width: 300,
-      backgroundColor: theme.palette.background.paper,
-      boxShadow: theme.shadows[5],
-      padding: theme.spacing(3, 4, 3),
-    },
-  }));
-
-  const classes = useStyles();
-  const [modalStyle] = React.useState(getModalStyle);
+  const [networkError, setNetworkError] = useState(null); 
 
   useAxios();
 
@@ -124,44 +100,25 @@ function App() {
           <Route path="/detail/:collection/:id" exact render={(props) => (<Layout {...props} connectAccount={connectAccount}><Detail {...props} user={user} /></Layout>)} />
           <Route path="/explore" exact render={(props) => (<Layout {...props} connectAccount={connectAccount}><Explore {...props} user={user} /></Layout>)} />
         </Switch>
-      </Router>
+      </Router>     
 
-      <Modal
-        open={!!errorModalOpen && !active}
-        onClose={(event, reason) => {
-          if (reason === "backdropClick") {
-            return false;
-          }
-          if (reason === "escapeKeyDown") {
-            return false;
-          }
+      <NetworkErrorDialog
+        open={!!errorModalOpen && !active}       
+        onClose={() => {
           setErrorModalOpen(false)
         }}
-        aria-labelledby="simple-modal-title"
-        aria-describedby="simple-modal-description"
-      >
-        <div style={modalStyle} className={`${classes.paper} modal-div`}>
-          <p>{networkError}</p>
-          <Button className="" onClick={closeErrorModal} variant="contained" color="primary">Close</Button>
-        </div>
-
-      </Modal>
-
+        handleClose={closeErrorModal}
+        message={networkError}
+      />
       <ConnectDialog
         open={!!connectModalOpen}
-        handleClose={(event, reason) => {
-          // if (reason === "backdropClick") {
-          //   return false;
-          // }
-          // if (reason === "escapeKeyDown") {
-          //   return false;
-          // }
+        handleClose={() => {
           setConnectModalOpen(false)
         }}
         connectors={connectors}
         connectToProvider={connectToProvider}
         connectorLocalStorageKey={connectorLocalStorageKey}
-      />    
+      />
     </React.Fragment>
   );
 }

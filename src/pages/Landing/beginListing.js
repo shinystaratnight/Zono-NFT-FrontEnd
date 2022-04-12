@@ -1,9 +1,14 @@
 import React from 'react'
+import { useWeb3React } from '@web3-react/core'
+import { useHistory } from 'react-router-dom'
 
 import { GridContainer, GridRow, GridItem } from 'components/Grid'
 import * as Element from './styles'
 
 const BeginListing = () => {
+
+  const { account } = useWeb3React();
+  const history = useHistory()
 
   return (
     <Element.BeginListingSection>
@@ -35,12 +40,16 @@ const BeginListing = () => {
                     You are simply one click away from listing your NFT on our site and selling them for a lot of money.<br /><br />
                     Put your NFTS up for auction or for sale at a predetermined price. Acquire feedback from viewers, purchase NFTs, collect one-of-a-kind things, and resell them.
                   </p>
-                  <Element.EarnBtn>
-                    <Element.SaleBtn>
-                      List Your NFT
-                      <Element.ArrowrightIcon></Element.ArrowrightIcon>
-                    </Element.SaleBtn>
-                  </Element.EarnBtn>
+                  {
+                    account && (
+                      <Element.EarnBtn>
+                        <Element.SaleBtn onClick={() => history.push('/create')}>
+                          List Your NFT
+                          <Element.ArrowrightIcon></Element.ArrowrightIcon>
+                        </Element.SaleBtn>
+                      </Element.EarnBtn>
+                    )
+                  }
                 </Element.SectionTitleBox>
               </Element.EarnInfo>
             </Element.EarnMainBox>

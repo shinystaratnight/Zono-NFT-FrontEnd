@@ -15,7 +15,7 @@ const LiveAuctions = () => {
       sortDir: 'desc',
       sortBy: 'timestamp',
       searchTxt: '',
-      saleType: 'all'
+      saleType: 'auction'
     }
 
     axios.get("/api/item", {
@@ -45,7 +45,8 @@ const LiveAuctions = () => {
                 <Element.EmBarBg></Element.EmBarBg>
               </Element.EmBar>
               <p className='sub-title'>
-                Explore the newly listed remarkable NFTs on NFTLand, choose the best one, and place your bid to purchase it.
+                Explore the newly listed remarkable NFTs on &nbsp;
+                <span className='token-info'>{ `${process.env.REACT_APP_TOKEN} NFT Marketplace` }</span>, choose the best one, and place your bid to purchase it.
               </p>
             </Element.SectionTitleBox>
           </GridItem>

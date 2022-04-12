@@ -92,7 +92,7 @@ const Profile = (props) => {
         break;
       default:
         break;
-    }  
+    }
 
     axios.get("/api/item", {
       params: paramData
@@ -231,7 +231,7 @@ const Profile = (props) => {
                             {
                               slice(items, startIndex, endIndex).map((item, index) => (
                                 <GridItem xl={4} lg={4} md={4} sm={6} xs={12} key={`grid-${index}`}>
-                                  <NftGridCard item={item} />
+                                  <NftGridCard item={item} buttonText='Details' />
                                 </GridItem>
                               ))
                             }

@@ -25,7 +25,7 @@ import { formatNum } from "utils";
 
 const NftGridCard = (props) => {
 
-  const { item } = props
+  const { item, buttonText } = props
 
   const [auctionStatus, setAuctionStatus] = useState(false)
   const [auctionStatusMessage, setAuctionStatusMessage] = useState('')
@@ -140,8 +140,8 @@ const NftGridCard = (props) => {
         }
         <BidLink to={`/detail/${item.itemCollection}/${item.tokenId}`}>
           {
-            item.auction ? 'Place A Bid' : 'Buy Now'
-          }          
+            buttonText ? buttonText : item.auction ? 'Place A Bid' : 'Buy Now'
+          }
         </BidLink>
       </NftInfo>
     </NftCard>

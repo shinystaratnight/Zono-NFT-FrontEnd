@@ -330,6 +330,18 @@ export const SectionTitleBox = styled.div`
     margin: 0 auto;
     color: #777;
     line-height: 1.6;
+    .token-info {
+      font-size: 16px;
+      font-weight: 400;
+      max-width: 600px;
+      margin: 0 auto;
+      color: #777;
+      line-height: 1.6;
+      letter-spacing: 0.025em;
+      text-transform: capitalize;
+      margin: unset;
+      display: inline-block;
+    }
   }
   @media screen and (max-width: 1199px) {
     h2 {

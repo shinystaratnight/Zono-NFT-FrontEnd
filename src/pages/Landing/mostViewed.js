@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react'
 import axios from 'axios'
 import { useWeb3React } from '@web3-react/core'
+import { slice } from 'lodash'
 
 import { GridContainer, GridRow, GridItem } from 'components/Grid'
 import NftGridCard from 'components/NftGridCard'
@@ -16,15 +17,17 @@ const MostViewed = () => {
     let paramData = {
       sortDir: 'desc',
       sortBy: 'timestamp',
-      saleType: 'all',
-      likes: account ?? '',
+      saleType: 'likeCount'     
     }
 
     axios.get("/api/item", {
       params: paramData
     })
-      .then(res => {       
-        setItems(res.data.items)
+      .then(res => {
+        const sortedItems = res.data.items.sort(function (a, b) {
+          return b.likeCount - a.likeCount;
+        })
+        setItems(slice(sortedItems, 0, 8))
       })
       .catch(() => {
         setItems([])
@@ -42,7 +45,7 @@ const MostViewed = () => {
           <GridItem xl={12} lg={12} md={12} sm={12}>
             <Element.SectionTitleBox textAlign='center'>
               <span>Items</span>
-              <h2>Items Viewed The Most</h2>
+              <h2>Items Most Favorited</h2>
               <Element.EmBar margin='0 auto 25px'>
                 <Element.EmBarBg></Element.EmBarBg>
               </Element.EmBar>
