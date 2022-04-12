@@ -40,7 +40,8 @@ export const Title = styled.div`
 `;
 export const InputSection = styled.div`
   text-align: center;
-  padding: 24px 0;
+  padding: 0;
+  padding-bottom: 24px;
 `
 export const InputText = styled.div`
   text-align: center;
@@ -100,8 +101,8 @@ export const ButtonSection = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  padding-top: 28px;
-  padding-bottom: 28px;
+  padding-top: 0px;
+  padding-bottom: 16px;
 `
 export const ButtonItem = styled.div`
   border-radius: 10px;
@@ -146,14 +147,14 @@ export const ImgSection = styled.div`
 }
 `
 export const ImgItem = styled.div`
-  padding: 1% 3%;
+  
 `
 export const ContractDiv = styled.div`
   padding-top: 2%;
   text-align: center;
   font-size: 16px;
   font-weight: bold;
-  color: rgba(0, 0, 0, 0.8)
+  color: rgba(0, 0, 0, 0.8);  
 `
 
 export const ContractLink = styled.a`
@@ -162,18 +163,14 @@ export const ContractLink = styled.a`
 `
 export const Img = styled.img`
   border-radius: 10px;
-  width: 400px;
-  height: 400px;
-  @media screen and (max-width: 575px) {
-    height: 90vw;
-  }
+  width: 100%;
+  height: auto;  
 `
 export const InfosBox = styled.div`
   display: flex;
   align-items: center;
   width: 100%;
-  justify-content: space-between;
-  max-width: 250px;
+  justify-content: space-between; 
   margin-left: auto;
   margin-right: auto;
   margin-bottom: 16px;
@@ -190,4 +187,10 @@ export const InfoValue = styled.p`
   color: var(--colorOrange);
   font-weight: bold;
   margin: 0;
+`
+
+export const MintCard = styled.div`
+  padding: 16px;
+  box-shadow: 0px 0px 15px rgb(238 238 238);
+  border-radius: 10px;
 `

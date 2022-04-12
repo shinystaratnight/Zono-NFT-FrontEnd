@@ -67,11 +67,13 @@ function Mint(props) {
 	const onMintItem = async () => {
 		if (account && !mintingNFT) {
 			if (!numToken) {
-				alert("You didn't set the number of nfts");
+				setSnackBarMessage("You didn't set the number of nfts");
+				setOpenSnackbar(true);
 				return;
 			}
 			if (balance < price * numToken) {
-				alert("You don't have enough tokens");
+				setSnackBarMessage("You don't have enough tokens");
+				setOpenSnackbar(true);
 				return;
 			}
 			setMintingNFT(true);
@@ -93,8 +95,7 @@ function Mint(props) {
 
 	}
 
-	const handleCloseDialog = (event, reason) => {
-		if (reason === 'clickaway') return;
+	const handleCloseDialog = () => {
 		setOpenSnackbar(false);
 	};
 
@@ -103,56 +104,60 @@ function Mint(props) {
 			<GridContainer>
 				{
 					account &&
-					<GridRow>
+					<GridRow justifyContent='center'>
 						<GridItem xl={12} lg={12} md={12} sm={12}>
-							<Element.ImgSection>
-								<Element.ImgItem>
-									<Element.Img src="images/mint_preview.jpg" alt="animation1" />
-								</Element.ImgItem>
-							</Element.ImgSection>
-							<Element.Section>
-								<Element.InputSection>
-									<Element.Title>Mint NFTs</Element.Title>
-									<Element.InputContainer>
-										<Element.SpanItem style={{ paddingRight: 20 }} onClick={decreaseNumToken}>-</Element.SpanItem>
-										<Element.InputItem value={numToken} readOnly />
-										<Element.SpanItem style={{ paddingLeft: 20 }} onClick={increaseNumToken}>+</Element.SpanItem>
-									</Element.InputContainer>
+							<Element.Title>Mint NFTs</Element.Title>
+						</GridItem>
+						<GridItem xl={4} lg={4} md={6} sm={12}>
+							<Element.MintCard>
+								<Element.ImgSection>
+									<Element.ImgItem>
+										<Element.Img src="images/mint_preview.jpg" alt="animation1" />
+									</Element.ImgItem>
+								</Element.ImgSection>
+								<Element.Section>
+									<Element.InputSection>
+										<Element.InputContainer>
+											<Element.SpanItem style={{ paddingRight: 20 }} onClick={decreaseNumToken}>-</Element.SpanItem>
+											<Element.InputItem value={numToken} readOnly />
+											<Element.SpanItem style={{ paddingLeft: 20 }} onClick={increaseNumToken}>+</Element.SpanItem>
+										</Element.InputContainer>
 
-								</Element.InputSection>
-								<Element.InfosBox>
-									<Element.InfoLabel>Minted:</Element.InfoLabel>
-									<Element.InfoValue>
-										{supply} / 3,000
-									</Element.InfoValue>
-								</Element.InfosBox>
-								<Element.InfosBox>
-									<Element.InfoLabel>Mint Price:</Element.InfoLabel>
-									<Element.InfoValue>
-										{price.toLocaleString('en', { maximumFractionDigits: 0 })} {process.env.REACT_APP_TOKEN}
-									</Element.InfoValue>
-								</Element.InfosBox>
-								<Element.InfosBox>
-									<Element.InfoLabel>Total Cost:</Element.InfoLabel>
-									<Element.InfoValue>
-										{(price * numToken).toLocaleString('en', { maximumFractionDigits: 0 })} {process.env.REACT_APP_TOKEN}
-									</Element.InfoValue>
-								</Element.InfosBox>
+									</Element.InputSection>
+									<Element.InfosBox>
+										<Element.InfoLabel>Minted:</Element.InfoLabel>
+										<Element.InfoValue>
+											{supply} / 3,000
+										</Element.InfoValue>
+									</Element.InfosBox>
+									<Element.InfosBox>
+										<Element.InfoLabel>Mint Price:</Element.InfoLabel>
+										<Element.InfoValue>
+											{price.toLocaleString('en', { maximumFractionDigits: 0 })} {process.env.REACT_APP_TOKEN}
+										</Element.InfoValue>
+									</Element.InfosBox>
+									<Element.InfosBox>
+										<Element.InfoLabel>Total Cost:</Element.InfoLabel>
+										<Element.InfoValue>
+											{(price * numToken).toLocaleString('en', { maximumFractionDigits: 0 })} {process.env.REACT_APP_TOKEN}
+										</Element.InfoValue>
+									</Element.InfosBox>
 
-								<Element.ButtonSection>
-									<CustomButton size='medium' onClick={onMintItem}>
-										{
-											mintingNFT ? <CircularProgress style={{ width: "16px", height: "16px", color: "white", }} /> : "Mint Now"
-										}
-									</CustomButton>
-								</Element.ButtonSection>
-							</Element.Section>
-							<div>
-								<Element.ContractDiv>
-									<span>NFT Contract: </span>
-									<Element.ContractLink href={"https://bscscan.com/address/0x6009E1302DBB61f4Cf82f6F03ab2cb986fb31c88"} rel="noopener noreferrer" target="_blank">0x6009E1302DBB61f4Cf82f6F03ab2cb986fb31c88</Element.ContractLink>
-								</Element.ContractDiv>
-							</div>
+									<Element.ButtonSection>
+										<CustomButton size='medium' onClick={onMintItem}>
+											{
+												mintingNFT ? <CircularProgress style={{ width: "16px", height: "16px", color: "white", }} /> : "Mint Now"
+											}
+										</CustomButton>
+									</Element.ButtonSection>
+								</Element.Section>
+								<div>
+									<Element.ContractDiv>
+										<span>NFT Contract: </span>
+										<Element.ContractLink href={"https://bscscan.com/address/0x6009E1302DBB61f4Cf82f6F03ab2cb986fb31c88"} rel="noopener noreferrer" target="_blank">0x6009E1302DBB61f4Cf82f6F03ab2cb986fb31c88</Element.ContractLink>
+									</Element.ContractDiv>
+								</div>
+							</Element.MintCard>
 						</GridItem>
 					</GridRow>
 				}

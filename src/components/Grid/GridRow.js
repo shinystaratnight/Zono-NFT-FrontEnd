@@ -6,10 +6,10 @@ import {
 
 const GridRow = (props) => {
 
-  const { children } = props
+  const { children, justifyContent } = props
 
   return (
-    <GridRowDom>
+    <GridRowDom justifyContent={justifyContent}>
       {
         children
       }

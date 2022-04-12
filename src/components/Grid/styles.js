@@ -28,6 +28,7 @@ export const GridRowDom = styled.div`
   flex-wrap: wrap;
   margin-right: -15px;
   margin-left: -15px;
+  justify-content: ${props => props.justifyContent ? props.justifyContent : ''};
 `
 export const GridItemDom = styled.div`
   position: relative;

@@ -22,6 +22,7 @@ import EditProfile from "pages/EditProfile";
 import Detail from "pages/Detail";
 import Explore from 'pages/Explore'
 import ConnectDialog from 'components/ConnectDialog'
+import Landing from 'pages/Landing'
 
 function App() {
 
@@ -115,7 +116,7 @@ function App() {
     <React.Fragment>
       <Router>
         <Switch>
-          <Route path="/" exact render={(props) => (<Layout {...props} connectAccount={connectAccount}><Explore {...props} user={user} /></Layout>)} />
+          <Route path="/" exact render={(props) => (<Layout {...props} connectAccount={connectAccount}><Landing {...props} user={user} /></Layout>)} />
           <Route path="/create" exact render={(props) => (<Layout {...props} connectAccount={connectAccount}><Create {...props} user={user} /></Layout>)} />
           <Route path="/mint" exact render={(props) => (<Layout {...props} connectAccount={connectAccount}><Mint {...props} user={user} /></Layout>)} />
           <Route path="/profile/:id" exact render={(props) => (<Layout {...props} connectAccount={connectAccount}><Profile {...props} getUser={getUser} user={user} login={login} /></Layout>)} />
