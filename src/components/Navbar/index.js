@@ -45,7 +45,7 @@ const Navbar = (props) => {
     deactivate(injectedConnector)
     deactivate(walletconnect)
     deactivate(bscConnector)
-    window.localStorage.setItem(connectorLocalStorageKey, "");
+    localStorage.setItem(connectorLocalStorageKey, "");
   }
 
   useEffect(() => {
