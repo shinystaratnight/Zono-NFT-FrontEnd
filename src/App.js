@@ -150,12 +150,12 @@ function App() {
       <ConnectDialog
         open={!!connectModalOpen}
         handleClose={(event, reason) => {
-          if (reason === "backdropClick") {
-            return false;
-          }
-          if (reason === "escapeKeyDown") {
-            return false;
-          }
+          // if (reason === "backdropClick") {
+          //   return false;
+          // }
+          // if (reason === "escapeKeyDown") {
+          //   return false;
+          // }
           setConnectModalOpen(false)
         }}
         connectors={connectors}
