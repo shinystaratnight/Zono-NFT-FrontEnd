@@ -26,7 +26,7 @@ export const CONTRACTS_BY_NETWORK = {
       abi: MarketABI
     },
     Auction: {
-      address: "0x5ef365a3b3f16b951c219713969ecbe69ece0dd0",
+      address: "0x72aeaa23bd8ef470041ef15fa215445e4dd11e57",
       abi: AuctionABI
     }
   },  
