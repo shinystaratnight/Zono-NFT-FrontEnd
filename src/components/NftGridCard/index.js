@@ -94,7 +94,7 @@ const NftGridCard = (props) => {
     <NftCard>
       <CardMedia>
         <Link to={`/detail/${item.itemCollection}/${item.tokenId}`}>
-          <CardImage src={item.image} />
+          <CardImage src={item.image} loading="lazy" />
         </Link>
         {
           item.auction && (

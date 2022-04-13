@@ -94,7 +94,7 @@ const NftListCard = (props) => {
       <CardContent>
         <CardMedia>
           <Link to={`/detail/${item.itemCollection}/${item.tokenId}`}>
-            <CardImage src={item.image} />
+            <CardImage src={item.image} loading="lazy" />
           </Link>
         </CardMedia>
         <NftInfo>
