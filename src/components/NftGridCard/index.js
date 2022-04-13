@@ -13,7 +13,6 @@ import {
   Title,
   Price,
   PriceToken,
-  BidLink,
   NftTime,
   TimeLabel,
   ClockIcon,
@@ -25,7 +24,7 @@ import { formatNum, getCurrencyInfo } from "utils";
 
 const NftGridCard = (props) => {
 
-  const { item, buttonText } = props
+  const { item } = props
 
   const [auctionStatus, setAuctionStatus] = useState(false)
   const [auctionStatusMessage, setAuctionStatusMessage] = useState('')

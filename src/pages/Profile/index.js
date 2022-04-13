@@ -1,12 +1,8 @@
 import React, { useState, useEffect, useCallback } from "react";
-import { ethers } from "ethers";
 import { useParams } from "react-router-dom";
-import { useWeb3React } from '@web3-react/core'
 import axios from 'axios'
 import { slice } from 'lodash'
-
-import { getTokenBalance } from "utils/contracts";
-import { shorter, formatNum } from "utils";
+import { shorter } from "utils";
 
 import { GridContainer, GridRow, GridItem } from 'components/Grid'
 import SearchForm from 'components/SearchForm'
@@ -29,10 +25,8 @@ const Profile = (props) => {
   const { user } = props;
 
   const pageSize = 9;
-
   const [userProfile, setUserProfile] = useState(undefined)
-  const { account, chainId, library } = useWeb3React();  
-
+  
   const [items, setItems] = useState([])
   const [page, setPage] = useState(1)  
   const [startIndex, setStartIndex] = useState(0)
