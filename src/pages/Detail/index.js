@@ -111,11 +111,16 @@ function Detail(props) {
 			if (props.user) {
 				setDidLike(item.likes && item.likes.includes(props.user.address.toLowerCase()))
 			}
+			if (item.auction) {
+                setTokenAddr(item.auction.tokenAdr)
+            }else if (item.pair) {
+                setTokenAddr(item.pair.tokenAdr)
+            } 
 		}
 	}, [item, props.user])
 
 	useEffect(() => {
-		if (item.auction) setInterval(() => setNewTime(), 1000);
+		if (item && item.auction) setInterval(() => setNewTime(), 1000);
 	}, [item]);
 
 	const setNewTime = () => {
@@ -510,7 +515,6 @@ function Detail(props) {
 												<Element.OptionText>Current Bid</Element.OptionText>
 												<Element.OptionContent>
 													<Element.PriceContainer>
-														<Element.CoinImage src={"/images/logo.png"} />
 														<Element.Price>{formatNum(item.auction?.price)}</Element.Price>
 														<Element.Unit>{getCurrencyInfo(item.auction.tokenAdr)?.symbol}</Element.Unit>
 													</Element.PriceContainer>
@@ -541,7 +545,6 @@ function Detail(props) {
 													<Element.OptionText>Price</Element.OptionText>
 													<Element.OptionContent>
 														<Element.PriceContainer>
-															<Element.CoinImage src={"/images/logo.png"} />
 															<Element.Price>{formatNum(item.pair?.price)}</Element.Price>
 															<Element.Unit>{getCurrencyInfo(item.pair.tokenAdr)?.symbol}</Element.Unit>
 														</Element.PriceContainer>
@@ -626,7 +629,6 @@ function Detail(props) {
 									<Element.ModalLabel>Your bid</Element.ModalLabel>
 									<Element.ModalMainPrice type={"number"} value={bidPrice} onChange={event => setBidPrice(event.target.value)} />
 									<Element.UnitContainer>
-										<Element.CoinImage src={"/images/logo.png"} />
 										<Element.Unit>{getCurrencyInfo(item.auction.tokenAdr)?.symbol}</Element.Unit>
 									</Element.UnitContainer>
 								</Element.BidPrice>
@@ -655,7 +657,6 @@ function Detail(props) {
 								<Element.ModalTitle>
 									<Element.ModalLabel>You will pay</Element.ModalLabel>
 									<Element.PayAmount>
-										<Element.CoinImage src={"/images/logo.png"} />
 										<Element.Price>{formatNum(item.pair?.price)}</Element.Price>
 										<Element.Unit>{getCurrencyInfo(item.pair.tokenAdr)?.symbol}</Element.Unit>
 									</Element.PayAmount>

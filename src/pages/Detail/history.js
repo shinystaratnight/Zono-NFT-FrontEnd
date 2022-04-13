@@ -42,8 +42,7 @@ function History(props) {
 				<S.BidTimeAgo>{timeAgo}</S.BidTimeAgo>
 			</S.BidderContent>
 			<S.BidAmount>
-				<S.PriceContainer>
-					<S.HistoryCoinImage src={"/images/logo.png"} />
+				<S.PriceContainer>					
 					<S.HistoryPrice>{formatNum(bid.bidPrice)}</S.HistoryPrice>
 					<S.HistoryUnit>{getCurrencyInfo(bid.tokenAdr)?.symbol}</S.HistoryUnit>
 				</S.PriceContainer>
